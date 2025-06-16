@@ -74,18 +74,6 @@ function App() {
     setShowEditSourdough(false);
   };
 
-  // Close orders/clients view
-  const handleCloseOrdersClients = () => {
-    setShowOrdersClients(false);
-    setSelectedOrdersClientsForm("");
-  };
-  // Close orders/clients view
-  const handleCloseOrdersProducts = () => {
-    setShowOrdersProducts(false);
-    setSelectedOrdersProductsForm("");
-  };
-
-
 
   const fetchForms = async () => {
     try {

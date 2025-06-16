@@ -78,15 +78,6 @@ function LeftPanel({
     marginBottom: '8px'
   };
 
-  // Section container style
-  const sectionContainerStyle = {
-    display: 'flex', 
-    flexDirection: 'column', 
-    gap: '8px', 
-    padding: '8px', 
-    backgroundColor: '#1f2937'
-  };
-
   return (
     <div style={{ 
       position: 'fixed',
