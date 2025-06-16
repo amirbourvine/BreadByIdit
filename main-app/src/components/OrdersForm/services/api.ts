@@ -1,6 +1,6 @@
 // src/services/api.ts
 
-const API_URL = 'api/api';
+const API_URL = 'http://13.49.120.33/api';
 
 // Function to get available dates
 export const getDates = async () => {

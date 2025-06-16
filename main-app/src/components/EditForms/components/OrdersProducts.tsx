@@ -54,7 +54,7 @@ function OrdersProducts({ formName }: OrdersProductsProps) {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch('api/api/products/generic_products');
+        const response = await fetch('http://13.49.120.33/api/products/generic_products');
         const data = await response.json();
         if (data.success) {
           const contents: { [key: string]: ProductContent } = {};
@@ -106,7 +106,7 @@ function OrdersProducts({ formName }: OrdersProductsProps) {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`api/api/orders?date=${encodeURIComponent(formName)}`);
+        const response = await fetch(`http://13.49.120.33/api/orders?date=${encodeURIComponent(formName)}`);
         const data = await response.json();
         
         if (!data.success) throw new Error(data.error || 'Failed to fetch data');

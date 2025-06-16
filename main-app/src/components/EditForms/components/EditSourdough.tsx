@@ -250,7 +250,7 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
         }, {} as { [key: string]: any })
       };
 
-      const response = await fetch('api/api/udpate_sourdough', {
+      const response = await fetch('http://13.49.120.33/api/udpate_sourdough', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

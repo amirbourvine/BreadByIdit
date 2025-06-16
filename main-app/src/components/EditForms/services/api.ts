@@ -1,6 +1,6 @@
 // src/services/api.ts
 
-export const API_URL = 'api/api';
+export const API_URL = 'http://13.49.120.33/api';
 
 // Define interface for product data with existent flag
 export interface ProductData {

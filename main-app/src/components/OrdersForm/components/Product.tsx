@@ -32,7 +32,7 @@ function Product({
 }: ProductProps) {
   
   const getImageSrc = () => {
-    return `api/api/images/${encodeURIComponent(name)}`;
+    return `http://13.49.120.33/api/images/${encodeURIComponent(name)}`;
   };
   
   const handleSelection = () => {

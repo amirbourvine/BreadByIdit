@@ -34,7 +34,7 @@ function FormItemEditor({
   
   const getImageSrc = () => {
     // Use the full server URL for the image endpoint
-    return `api/api/images/${encodeURIComponent(product.name)}`;
+    return `http://13.49.120.33/api/images/${encodeURIComponent(product.name)}`;
   };
   
   // Handle description change
