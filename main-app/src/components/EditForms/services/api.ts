@@ -1,6 +1,6 @@
 // src/services/api.ts
 
-export const API_URL = 'http://localhost:5000/api';
+export const API_URL = 'api/api';
 
 // Define interface for product data with existent flag
 export interface ProductData {

@@ -1,6 +1,6 @@
 // src/services/api.ts
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'api/api';
 
 // Function to get available dates
 export const getDates = async () => {

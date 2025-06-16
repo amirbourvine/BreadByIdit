@@ -30,7 +30,7 @@ function OrdersClients({ formName }: OrdersClientsProps) {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/api/orders?date=${encodeURIComponent(formName)}`);
+        const response = await fetch(`api/api/orders?date=${encodeURIComponent(formName)}`);
         const data = await response.json();
         
         if (!data.success) throw new Error(data.error || 'Failed to fetch orders');
