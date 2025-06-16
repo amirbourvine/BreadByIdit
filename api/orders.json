@@ -1,0 +1,176 @@
+{
+  "Friday 28.03.25 13:00": {
+    "orders": [
+      {
+        "id": "1743072162.316642",
+        "name": "\u05e2\u05de\u05d9\u05e8 \u05d1\u05d5\u05e8\u05d1\u05d9\u05df",
+        "phone": "0525583891",
+        "date": "Friday 28.03.25 13:00",
+        "comment": "\u05d0\u05e9\u05de\u05d7 \u05dc\u05dc\u05d7\u05dd \u05dc\u05d0 \u05e4\u05e8\u05d5\u05e1",
+        "selectedProducts": {
+          "\u05dc\u05d7\u05dd \u05db\u05e4\u05e8\u05d9 \u05e6\u05e8\u05e4\u05ea\u05d9 - \u05d2\u05e8\u05d8\u05d9": {
+            "extras": {
+              "\u05d1\u05e6\u05dc \u05de\u05e7\u05d5\u05e8\u05de\u05dc": 2
+            }
+          }
+        },
+        "totalAmount": 64,
+        "timestamp": "2025-03-27T12:42:42.316642"
+      },
+      {
+        "id": "1743072806.278376",
+        "name": "\u05e0\u05e2\u05d4 \u05d0\u05d1\u05df \u05d8\u05d5\u05d1",
+        "phone": "0586734358",
+        "date": "Friday 28.03.25 13:00",
+        "comment": "",
+        "selectedProducts": {
+          "\u05dc\u05d7\u05dd \u05e9\u05d0\u05d5\u05e8 \u05e6\u05e8\u05e4\u05ea\u05d9": {
+            "extras": {
+              "\u05d1\u05ea\u05d5\u05e1\u05e4\u05ea \u05e7\u05d9\u05de\u05dc": 8,
+              "\u05dc\u05dc\u05d0 \u05ea\u05d5\u05e1\u05e4\u05d5\u05ea": 4
+            }
+          }
+        },
+        "totalAmount": 352,
+        "timestamp": "2025-03-27T12:53:26.278376"
+      },
+      {
+        "id": "1743085111.319788",
+        "name": "\u05e2\u05d9\u05dc\u05dd \u05d1\u05d5\u05e8\u05d1\u05d9\u05df",
+        "phone": "0524446874",
+        "date": "Friday 28.03.25 13:00",
+        "comment": "",
+        "selectedProducts": {
+          "\u05dc\u05d7\u05dd \u05e8\u05d5\u05d6\u05d8\u05d9\u05e7\u05d5": {
+            "extras": {
+              "\u05e8\u05d5\u05d6\u05d8\u05d9\u05e7\u05d5 \u05d2\u05d3\u05d5\u05dc": 2,
+              "\u05e8\u05d5\u05d6\u05d8\u05d9\u05e7\u05d5 \u05e8\u05d2\u05d9\u05dc": 3
+            }
+          },
+          "\u05dc\u05d7\u05dd \u05db\u05d5\u05e1\u05de\u05d9\u05df": {
+            "extras": {
+              "\u05e7\u05e6\u05d7 \u05d5\u05e9\u05d5\u05de\u05e9\u05d5\u05dd": 3,
+              "\u05de\u05d1\u05d7\u05e8 \u05d2\u05e8\u05e2\u05d9\u05e0\u05d9\u05dd": 1
+            }
+          }
+        },
+        "totalAmount": 276,
+        "timestamp": "2025-03-27T16:18:31.319788"
+      },
+      {
+        "id": "1743087213.171318",
+        "name": "\u05e2\u05d9\u05d3\u05d5 \u05d1\u05d5\u05e8\u05d1\u05d9\u05df",
+        "phone": "0505991166",
+        "date": "Friday 28.03.25 13:00",
+        "comment": "",
+        "selectedProducts": {
+          "\u05dc\u05d7\u05dd \u05db\u05d5\u05e1\u05de\u05d9\u05df": {
+            "extras": {
+              "\u05e7\u05e6\u05d7 \u05d5\u05e9\u05d5\u05de\u05e9\u05d5\u05dd": 2,
+              "\u05ea\u05e2\u05e8\u05d5\u05d1\u05ea \u05e9\u05d5\u05de\u05e9\u05d5\u05dd": 1
+            }
+          }
+        },
+        "totalAmount": 90,
+        "timestamp": "2025-03-27T16:53:33.171318"
+      },
+      {
+        "id": "1743336413.22118",
+        "name": "\u05e2\u05d9\u05dc\u05dd \u05d1\u05d5\u05e8\u05d1\u05d9\u05df \u05d0\u05d5\u05d4\u05d1",
+        "phone": "0525842802",
+        "date": "Friday 28.03.25 13:00",
+        "comment": "\u05d0\u05d5\u05d4\u05d1",
+        "selectedProducts": {
+          "\u05dc\u05d7\u05dd \u05db\u05e4\u05e8\u05d9 \u05e6\u05e8\u05e4\u05ea\u05d9 - \u05d2\u05e8\u05d8\u05d9": {
+            "extras": {
+              "\u05dc\u05dc\u05d0 \u05ea\u05d5\u05e1\u05e4\u05d5\u05ea": 2
+            }
+          }
+        },
+        "totalAmount": 60,
+        "timestamp": "2025-03-30T15:06:53.221180"
+      }
+    ],
+    "products": {
+      "\u05dc\u05d7\u05dd \u05db\u05e4\u05e8\u05d9 \u05e6\u05e8\u05e4\u05ea\u05d9 - \u05d2\u05e8\u05d8\u05d9": {
+        "total_amount": 4,
+        "extras": {
+          "\u05d1\u05e6\u05dc \u05de\u05e7\u05d5\u05e8\u05de\u05dc": {
+            "amount": 2,
+            "names": [
+              "\u05e2\u05de\u05d9\u05e8 \u05d1\u05d5\u05e8\u05d1\u05d9\u05df"
+            ]
+          },
+          "\u05dc\u05dc\u05d0 \u05ea\u05d5\u05e1\u05e4\u05d5\u05ea": {
+            "amount": 2,
+            "names": [
+              "\u05e2\u05d9\u05dc\u05dd \u05d1\u05d5\u05e8\u05d1\u05d9\u05df \u05d0\u05d5\u05d4\u05d1"
+            ]
+          }
+        }
+      },
+      "\u05dc\u05d7\u05dd \u05e9\u05d0\u05d5\u05e8 \u05e6\u05e8\u05e4\u05ea\u05d9": {
+        "total_amount": 12,
+        "extras": {
+          "\u05d1\u05ea\u05d5\u05e1\u05e4\u05ea \u05e7\u05d9\u05de\u05dc": {
+            "amount": 8,
+            "names": [
+              "\u05e0\u05e2\u05d4 \u05d0\u05d1\u05df \u05d8\u05d5\u05d1"
+            ]
+          },
+          "\u05dc\u05dc\u05d0 \u05ea\u05d5\u05e1\u05e4\u05d5\u05ea": {
+            "amount": 4,
+            "names": [
+              "\u05e0\u05e2\u05d4 \u05d0\u05d1\u05df \u05d8\u05d5\u05d1"
+            ]
+          }
+        }
+      },
+      "\u05dc\u05d7\u05dd \u05e8\u05d5\u05d6\u05d8\u05d9\u05e7\u05d5": {
+        "total_amount": 5,
+        "extras": {
+          "\u05e8\u05d5\u05d6\u05d8\u05d9\u05e7\u05d5 \u05d2\u05d3\u05d5\u05dc": {
+            "amount": 2,
+            "names": [
+              "\u05e2\u05d9\u05dc\u05dd \u05d1\u05d5\u05e8\u05d1\u05d9\u05df"
+            ]
+          },
+          "\u05e8\u05d5\u05d6\u05d8\u05d9\u05e7\u05d5 \u05e8\u05d2\u05d9\u05dc": {
+            "amount": 3,
+            "names": [
+              "\u05e2\u05d9\u05dc\u05dd \u05d1\u05d5\u05e8\u05d1\u05d9\u05df"
+            ]
+          }
+        }
+      },
+      "\u05dc\u05d7\u05dd \u05db\u05d5\u05e1\u05de\u05d9\u05df": {
+        "total_amount": 7,
+        "extras": {
+          "\u05e7\u05e6\u05d7 \u05d5\u05e9\u05d5\u05de\u05e9\u05d5\u05dd": {
+            "amount": 5,
+            "names": [
+              "\u05e2\u05d9\u05dc\u05dd \u05d1\u05d5\u05e8\u05d1\u05d9\u05df",
+              "\u05e2\u05d9\u05d3\u05d5 \u05d1\u05d5\u05e8\u05d1\u05d9\u05df"
+            ]
+          },
+          "\u05de\u05d1\u05d7\u05e8 \u05d2\u05e8\u05e2\u05d9\u05e0\u05d9\u05dd": {
+            "amount": 1,
+            "names": [
+              "\u05e2\u05d9\u05dc\u05dd \u05d1\u05d5\u05e8\u05d1\u05d9\u05df"
+            ]
+          },
+          "\u05ea\u05e2\u05e8\u05d5\u05d1\u05ea \u05e9\u05d5\u05de\u05e9\u05d5\u05dd": {
+            "amount": 1,
+            "names": [
+              "\u05e2\u05d9\u05d3\u05d5 \u05d1\u05d5\u05e8\u05d1\u05d9\u05df"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Tuesday 01.04.25 14:00": {
+    "orders": [],
+    "products": {}
+  }
+}
