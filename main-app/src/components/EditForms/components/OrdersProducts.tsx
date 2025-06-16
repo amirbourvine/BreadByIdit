@@ -37,10 +37,9 @@ interface ProductContent {
 
 interface OrdersProductsProps {
   formName: string;
-  onClose: () => void;
 }
 
-function OrdersProducts({ formName, onClose }: OrdersProductsProps) {
+function OrdersProducts({ formName }: OrdersProductsProps) {
   const [products, setProducts] = useState<{ [key: string]: ProductDetails }>({});
   const [productContents, setProductContents] = useState<{ [key: string]: ProductContent }>({});
   const [orders, setOrders] = useState<Order[]>([]);
@@ -299,7 +298,7 @@ function OrdersProducts({ formName, onClose }: OrdersProductsProps) {
                       </div>
                     
                       {/* New Content Section */}
-                      {content.flour>0 && (
+                      {content.flour && content.flour>0 && (
                         <div style={{ marginTop: '24px' }}>
                           <h3 style={{ marginBottom: '16px', color: '#374151' }}>Production Requirements</h3>
                           

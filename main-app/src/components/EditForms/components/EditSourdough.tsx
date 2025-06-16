@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { getProducts, ProductData, API_URL } from '../services/api';
+import { getProducts, ProductData } from '../services/api';
 
 interface EditContentsProps {
   onClose: () => void;

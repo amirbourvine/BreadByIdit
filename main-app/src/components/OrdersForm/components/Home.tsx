@@ -1,6 +1,3 @@
-interface HomeProps {
-    
-}
   
 function Home() {
     return (

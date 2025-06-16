@@ -18,6 +18,7 @@ interface ProductData {
   description: string;
   extras: Extra[];
   soldOut: boolean;
+  inventory: number;
 }
 
 function App() {

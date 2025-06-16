@@ -381,12 +381,10 @@ function App() {
         ) : showOrdersClients ? (
           <OrdersClients 
             formName={selectedOrdersClientsForm}
-            onClose={handleCloseOrdersClients}
           />
         ) : showOrdersProducts ? (
           <OrdersProducts 
             formName={selectedOrdersProductsForm}
-            onClose={handleCloseOrdersProducts}
           />
         ) : showAddNewProduct ? (
           <AddNewItem 

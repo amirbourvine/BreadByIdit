@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 import EditForms from './components/EditForms/App';
 import OrdersForm from './components/OrdersForm/App';

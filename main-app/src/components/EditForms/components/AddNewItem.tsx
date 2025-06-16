@@ -7,7 +7,7 @@ interface AddNewItemProps {
   formName?: string;
 }
 
-function AddNewItem({ onSave, onCancel, formName = "generic_products" }: AddNewItemProps) {
+function AddNewItem({ onSave, formName = "generic_products" }: AddNewItemProps) {
   const [productName, setProductName] = useState<string>('');
   const [productDescription, setProductDescription] = useState<string>('');
   const [extras, setExtras] = useState<Array<{ name: string; minAmount: number; maxAmount: number; price: number }>>([]);

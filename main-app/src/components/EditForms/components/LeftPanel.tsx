@@ -118,7 +118,7 @@ function LeftPanel({
         </div>
         
         {openSections.editForms && (
-          <div style={sectionContainerStyle}>
+          <div>
             <button 
               onClick={onCreateForm} 
               style={{ 
@@ -299,7 +299,7 @@ function LeftPanel({
         </div>
         
         {openSections.editProducts && (
-          <div style={sectionContainerStyle}>
+          <div>
             {/* Existing buttons */}
             <button 
               onClick={onAddNewProduct} 

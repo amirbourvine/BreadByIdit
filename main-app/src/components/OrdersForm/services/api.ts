@@ -103,7 +103,7 @@ export const getProducts = async (date: string) => {
     }
     
     // Filter products to only return those where existent=true
-    const existentProducts = data.products.filter(product => product.existent === true);
+    const existentProducts = data.products.filter((product: any) => product.existent === true);
     
     // Return an object containing products and comment
     const ret_dict = {

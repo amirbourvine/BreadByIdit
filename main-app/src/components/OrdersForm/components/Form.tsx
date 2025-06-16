@@ -160,12 +160,12 @@ function Form({ date, products, above_comment, onPlaceAnotherOrder }: FormProps)
         const productSelection = selectedProducts[productName];
         if (productSelection.selected) {
           // Find the current product data
-          const currentProduct = currentProducts.find(p => p.name === productName);
+          const currentProduct = currentProducts.find((p: any) => p.name === productName);
           
           if (currentProduct) {
             // Check extras inventory
             var orderedAmount = 0;
-            currentProduct.extras.forEach(extra => {
+            currentProduct.extras.forEach((extra: any) => {
                 orderedAmount = orderedAmount + (productSelection.extras[extra.name] || 0);
             });
             const availableInventory = currentProduct.inventory || 0;

@@ -17,10 +17,9 @@ interface Order {
 
 interface OrdersClientsProps {
   formName: string;
-  onClose: () => void;
 }
 
-function OrdersClients({ formName, onClose }: OrdersClientsProps) {
+function OrdersClients({ formName }: OrdersClientsProps) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
