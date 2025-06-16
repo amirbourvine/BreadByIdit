@@ -626,4 +626,4 @@ def update_sourdough_amounts():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    app.run(port=5000, host="0.0.0.0")
