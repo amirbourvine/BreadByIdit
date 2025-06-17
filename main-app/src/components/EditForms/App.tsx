@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import LeftPanel from './components/LeftPanel'
-import FormEditor from './components/FormEditor'; // Renamed from Form
+import FormEditor from './components/FormEditor';
 import Home from './components/Home';
-import AddNewItem from './components/AddNewItem'; // Import the new component
-import DeleteProduct from './components/DeleteProduct'; // Import the DeleteProduct component
+import AddNewItem from './components/AddNewItem';
+import DeleteProduct from './components/DeleteProduct';
 import { getDates, getProducts, createNewForm, deleteForm, updateFormVisibility } from './services/api';
 import OrdersClients from './components/OrdersClients';
 import OrdersProducts from './components/OrdersProducts';
 import EditContents from './components/EditSourdough';
 
-// Define the interfaces for Extra and ProductData
 interface Extra {
   name: string;
   minAmount: number;
@@ -26,6 +25,11 @@ interface ProductData {
 }
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [showPasswordPopup, setShowPasswordPopup] = useState<boolean>(true);
+  const [passwordInput, setPasswordInput] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
+  
   const [forms, setForms] = useState<string[]>(["Home"]);
   const [selectedForm, setSelectedForm] = useState<string>("Home");
   const [products, setProducts] = useState<ProductData[]>([]);
@@ -33,8 +37,8 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [showFormNameDialog, setShowFormNameDialog] = useState<boolean>(false);
   const [newFormName, setNewFormName] = useState<string>("");
-  const [showAddNewProduct, setShowAddNewProduct] = useState<boolean>(false); // State for product page
-  const [showDeleteProduct, setShowDeleteProduct] = useState<boolean>(false); // New state for delete product page
+  const [showAddNewProduct, setShowAddNewProduct] = useState<boolean>(false);
+  const [showDeleteProduct, setShowDeleteProduct] = useState<boolean>(false);
   const [formComment, setFormComment] = useState<string>("");
   const [showOrdersClients, setShowOrdersClients] = useState<boolean>(false);
   const [selectedOrdersClientsForm, setSelectedOrdersClientsForm] = useState<string>("");
@@ -42,11 +46,30 @@ function App() {
   const [selectedOrdersProductsForm, setSelectedOrdersProductsForm] = useState<string>("");
   const [showEditSourdough, setShowEditSourdough] = useState<boolean>(false);
 
-  // Fetch available forms/dates when component mounts
-  useEffect(() => {
-    fetchForms();
-  }, []);
+  // Password protection
+  const handlePasswordSubmit = () => {
+    if (passwordInput === "hello") {
+      setIsAuthenticated(true);
+      setShowPasswordPopup(false);
+      setPasswordError('');
+    } else {
+      setPasswordError('Incorrect password. Please try again.');
+      setPasswordInput('');
+    }
+  };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handlePasswordSubmit();
+    }
+  };
+
+  // Fetch forms only after authentication
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchForms();
+    }
+  }, [isAuthenticated]);
 
   const handleShowEditSourdough = () => {
     setShowEditSourdough(true);
@@ -74,7 +97,6 @@ function App() {
     setShowEditSourdough(false);
   };
 
-
   const fetchForms = async () => {
     try {
       setLoading(true);
@@ -89,11 +111,9 @@ function App() {
     }
   };
 
-  // Fetch products when selected form changes
   useEffect(() => {
     const fetchProductsForForm = async () => {
-      // Skip if Home page is selected or if the form is not yet loaded
-      if (selectedForm === "Home" || !forms.includes(selectedForm)) {
+      if (!isAuthenticated || selectedForm === "Home" || !forms.includes(selectedForm)) {
         return;
       }
 
@@ -101,6 +121,7 @@ function App() {
         setLoading(true);
         const productsData = await getProducts(selectedForm);
         setProducts(productsData.products);
+        setFormComment(productsData.comment);
         setError(null);
       } catch (err) {
         console.error(`Failed to fetch products for ${selectedForm}:`, err);
@@ -112,10 +133,8 @@ function App() {
     };
 
     fetchProductsForForm();
-  }, [selectedForm, forms]);
+  }, [selectedForm, forms, isAuthenticated]);
 
-
-  // Replace the direct usage of setSelectedForm with this handler function
   const handleSelectForm = (formName: string) => {
     setSelectedForm(formName);
     setShowAddNewProduct(false);
@@ -126,31 +145,21 @@ function App() {
   };
 
   function getNextFridayOrTuesday(): string {
-    // Get current date
     const now = new Date();
-    
-    // Day constants (JavaScript uses 0-6 for days, where 0 is Sunday)
     const FRIDAY = 5;
     const TUESDAY = 2;
-    
-    // Get current day of week
     const currentDay = now.getDay();
     
-    // Calculate days until next Friday
     let daysUntilFriday = (FRIDAY - currentDay + 7) % 7;
-    // If today is Friday and it's before 13:00, use today
     if (currentDay === FRIDAY && now.getHours() < 13) {
       daysUntilFriday = 0;
     }
     
-    // Calculate days until next Tuesday
     let daysUntilTuesday = (TUESDAY - currentDay + 7) % 7;
-    // If today is Tuesday and it's before 14:00, use today
     if (currentDay === TUESDAY && now.getHours() < 14) {
       daysUntilTuesday = 0;
     }
     
-    // Create dates for the next Friday and Tuesday
     const nextFriday = new Date(now);
     nextFriday.setDate(now.getDate() + daysUntilFriday);
     nextFriday.setHours(13, 0, 0, 0);
@@ -159,7 +168,6 @@ function App() {
     nextTuesday.setDate(now.getDate() + daysUntilTuesday);
     nextTuesday.setHours(14, 0, 0, 0);
     
-    // Choose the closest date
     let chosenDate;
     if (nextFriday <= nextTuesday) {
       chosenDate = nextFriday;
@@ -167,29 +175,24 @@ function App() {
       chosenDate = nextTuesday;
     }
     
-    // Format the date as "Weekday DD.MM.YY HH:00"
     const weekday = chosenDate.getDay() === FRIDAY ? "Friday" : "Tuesday";
     const day = chosenDate.getDate();
-    const month = chosenDate.getMonth() + 1; // JavaScript months are 0-based
-    const year = chosenDate.getFullYear().toString().substr(-2); // Get last two digits
+    const month = chosenDate.getMonth() + 1;
+    const year = chosenDate.getFullYear().toString().substr(-2);
     const hour = chosenDate.getDay() === FRIDAY ? 13 : 14;
     
-    // Format with leading zeros for day and month if needed
     const formattedDay = day < 10 ? `0${day}` : day;
     const formattedMonth = month < 10 ? `0${month}` : month;
     
     return `${weekday} ${formattedDay}.${formattedMonth}.${year} ${hour}:00`;
   }
 
-  // Handler for initiating the form creation process
   const handleOpenCreateFormDialog = () => {
-    // Generate default name suggestion
     const defaultName = getNextFridayOrTuesday();
     setNewFormName(defaultName);
     setShowFormNameDialog(true);
   };
 
-  // Handler for creating a new form
   const handleCreateForm = async () => {
     if (!newFormName.trim()) {
       alert("Please enter a form name");
@@ -199,13 +202,9 @@ function App() {
     try {
       setLoading(true);
       setShowFormNameDialog(false);
-      
       await createNewForm(newFormName);
-      // Refresh the forms list
       await fetchForms();
-      // Select the newly created form
       setSelectedForm(newFormName);
-      // Reset form name
       setNewFormName("");
     } catch (err) {
       console.error('Failed to create new form:', err);
@@ -215,22 +214,18 @@ function App() {
     }
   };
 
-  // Handler for canceling form creation
   const handleCancelFormCreation = () => {
     setShowFormNameDialog(false);
     setNewFormName("");
   };
 
-  // Handler for deleting a form
   const handleDeleteForm = async (formName: string) => {
     if (formName === "Home") return;
     
     try {
       setLoading(true);
       await deleteForm(formName);
-      // Refresh the forms list
       await fetchForms();
-      // If the deleted form was selected, go back to home
       if (selectedForm === formName) {
         setSelectedForm("Home");
       }
@@ -242,7 +237,6 @@ function App() {
     }
   };
 
-  // Function to save visibility state to the backend
   const saveVisibilityChanges = async (visibilityData: { [key: string]: boolean }) => {
     try {
       setLoading(true);
@@ -256,71 +250,100 @@ function App() {
     }
   };
 
-  // Handler for showing the Add New Product page
   const handleShowAddNewProduct = () => {
     setShowAddNewProduct(true);
-    setShowDeleteProduct(false); // Hide delete product page
+    setShowDeleteProduct(false);
     setShowOrdersClients(false);
     setShowOrdersProducts(false);
     setShowEditSourdough(false);
   };
 
-  // Handler for showing the Delete Product page
   const handleShowDeleteProduct = () => {
     setShowDeleteProduct(true);
-    setShowAddNewProduct(false); // Hide add product page
+    setShowAddNewProduct(false);
     setShowOrdersClients(false);
     setShowOrdersProducts(false);
     setShowEditSourdough(false);
   };
 
-  // Handler for saving a new product
   const handleSaveNewProduct = async (product: ProductData) => {
-    // Here you would implement the API call to save the new product
     console.log('Saving new product:', product);
-    
-    // For now, we'll just close the add product page
     setShowAddNewProduct(false);
-    
-    // You could refresh the products list here if needed
   };
 
-  // Handler for canceling product creation
   const handleCancelNewProduct = () => {
     setShowAddNewProduct(false);
   };
 
-  // Handler for canceling product deletion
   const handleCancelDeleteProduct = () => {
     setShowDeleteProduct(false);
   };
 
-  // Inside App.tsx where you render the FormEditor
-  useEffect(() => {
-    const fetchProductsForForm = async () => {
-      // Skip if Home page is selected or if the form is not yet loaded
-      if (selectedForm === "Home" || !forms.includes(selectedForm)) {
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const productsData = await getProducts(selectedForm);
-        setProducts(productsData.products);
-        // Store the comment too
-        setFormComment(productsData.comment);
-        setError(null);
-      } catch (err) {
-        console.error(`Failed to fetch products for ${selectedForm}:`, err);
-        setError(`Failed to load products for ${selectedForm}. Please try again later.`);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProductsForForm();
-  }, [selectedForm, forms]);
+  if (!isAuthenticated) {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        zIndex: 1000
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '30px',
+          borderRadius: '10px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+          width: '350px',
+          textAlign: 'center'
+        }}>
+          <h2 style={{ marginTop: 0, marginBottom: '20px', color: '#333' }}>
+            Enter Password
+          </h2>
+          <input
+            type="password"
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            style={{
+              width: '100%',
+              padding: '12px',
+              fontSize: '16px',
+              borderRadius: '6px',
+              border: `1px solid ${passwordError ? 'red' : '#ddd'}`,
+              boxSizing: 'border-box',
+              marginBottom: '15px'
+            }}
+            placeholder="Enter password..."
+            autoFocus
+          />
+          {passwordError && (
+            <p style={{ color: 'red', margin: '0 0 15px 0' }}>{passwordError}</p>
+          )}
+          <button
+            onClick={handlePasswordSubmit}
+            style={{
+              width: '100%',
+              padding: '12px',
+              fontSize: '16px',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            Unlock App
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ 
@@ -335,7 +358,7 @@ function App() {
     }}>
       <LeftPanel 
         forms={forms} 
-        onSelectForm={handleSelectForm} // Use our new handler here
+        onSelectForm={handleSelectForm}
         onCreateForm={handleOpenCreateFormDialog}
         onDeleteForm={handleDeleteForm}
         currentForm={selectedForm}
