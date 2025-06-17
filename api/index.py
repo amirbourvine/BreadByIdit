@@ -441,7 +441,7 @@ def create_form():
 
 @app.route('/api/forms/<form_name>', methods=['PUT'])
 def update_form(form_name):
-    """Update products for a form"""
+    """Update products for a form while preserving the order"""
     data = request.json
     
     if 'products' not in data:
@@ -472,8 +472,9 @@ def update_form(form_name):
             comment = forms_data[form_name]["comment"]
     
     # Process products to ensure inventory and soldOut are set correctly
+    # IMPORTANT: Maintain the exact order that was sent from the frontend
     processed_products = []
-    for product in data['products']:
+    for product in data['products']:  # This maintains the order from the frontend
         # Set default inventory to 12 if not provided
         inventory = product.get('inventory', 12)
         
@@ -488,8 +489,9 @@ def update_form(form_name):
         processed_products.append(processed_product)
     
     # Update the form's products with the new structure including comment
+    # The order of products in the list will now match the UI order
     forms_data[form_name] = {
-        "products": processed_products,
+        "products": processed_products,  # Order is preserved from frontend
         "metadata": metadata,
         "comment": comment
     }
@@ -498,7 +500,8 @@ def update_form(form_name):
     
     return jsonify({
         "success": True,
-        "formName": form_name
+        "formName": form_name,
+        "productCount": len(processed_products)
     })
 
 
