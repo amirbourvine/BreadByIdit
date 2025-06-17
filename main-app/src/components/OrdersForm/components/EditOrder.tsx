@@ -107,7 +107,7 @@ function EditOrder() {
     console.log("here 01");
     if (!selectedOrder) return;
     console.log("here 02");
-    
+
     try {
       setLoading(true);
       setStep(5); // Show deletion success
@@ -225,8 +225,22 @@ function EditOrder() {
             >
               <div style={{ fontWeight: 'bold' }}>{order.name}</div>
               <div>Phone: {order.phone}</div>
-              <div>Date: {new Date(order.date).toLocaleString()}</div>
-              <div>Made at: {order.timestamp}</div>
+              <div>
+                {(() => {
+                  const date = new Date(order.timestamp);
+                  // Add 3 hours to the original time
+                  date.setHours(date.getHours() + 3);
+                  
+                  // Format to "HH:mm DD/MM/YYYY"
+                  const hours = String(date.getHours()).padStart(2, '0');
+                  const minutes = String(date.getMinutes()).padStart(2, '0');
+                  const day = String(date.getDate()).padStart(2, '0');
+                  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+                  const year = date.getFullYear();
+                  
+                  return `Made At: ${hours}:${minutes} ${day}/${month}/${year}`;
+                })()}
+              </div>
             </div>
           ))
         )}
