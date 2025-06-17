@@ -26,7 +26,7 @@ interface ProductData {
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [showPasswordPopup, setShowPasswordPopup] = useState<boolean>(true);
+  const [, setShowPasswordPopup] = useState<boolean>(true);
   const [passwordInput, setPasswordInput] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
   
