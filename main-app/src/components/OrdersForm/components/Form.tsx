@@ -247,7 +247,8 @@ function Form({
           const product = selectedProducts[productName];
           if (product.selected) {
             acc[productName] = {
-              extras: product.extras
+              extras: product.extras,
+              selected: true
             };
           }
           return acc;
