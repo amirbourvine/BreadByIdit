@@ -262,6 +262,7 @@ function Form({
         if (onUpdate) onUpdate(orderData);
       } else {
         // Submit new order to backend
+        console.log(orderData.selectedProducts)
         await submitOrder(orderData);
         
         // Reset form on success
