@@ -231,3 +231,31 @@ export const updateInventory = async (date: string, inventoryUpdates: {
       throw error;
     }
   };
+
+
+// Get single order
+export const getOrder = async (orderId: string) => {
+  const response = await fetch(`/api/orders/${orderId}`);
+  if (!response.ok) throw new Error('Failed to fetch order');
+  return response.json();
+};
+
+// Update existing order
+export const updateOrder = async (orderId: string, orderData: any) => {
+  const response = await fetch(`/api/orders/${orderId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(orderData)
+  });
+  if (!response.ok) throw new Error('Failed to update order');
+  return response.json();
+};
+
+// Delete order
+export const deleteOrder = async (orderId: string) => {
+  const response = await fetch(`/api/orders/${orderId}`, {
+    method: 'DELETE'
+  });
+  if (!response.ok) throw new Error('Failed to delete order');
+  return response.json();
+};

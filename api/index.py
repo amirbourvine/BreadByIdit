@@ -626,7 +626,82 @@ def update_sourdough_amounts():
 
     return jsonify({"success": True})
 
+# Helper function to find order by ID
+def find_order(order_id):
+    orders_data = read_orders()
+    for form_name, form_data in orders_data.items():
+        for idx, order in enumerate(form_data["orders"]):
+            if order["id"] == order_id:
+                return form_name, idx, order
+    return None, None, None
 
+# Get order by ID
+@app.route('/api/orders/<order_id>', methods=['GET'])
+def get_order(order_id):
+    form_name, idx, order = find_order(order_id)
+    if not order:
+        return jsonify({"success": False, "error": "Order not found"}), 404
+    return jsonify({"success": True, "order": order})
+
+# Update existing order
+@app.route('/api/orders/<order_id>', methods=['PUT'])
+def update_order(order_id):
+    form_name, idx, old_order = find_order(order_id)
+    if not old_order:
+        return jsonify({"success": False, "error": "Order not found"}), 404
+    
+    data = request.json
+    orders_data = read_orders()
+    
+    # Update order details
+    updated_order = {
+        **old_order,
+        "phone": data.get("phone", old_order["phone"]),
+        "comment": data.get("comment", old_order["comment"]),
+        "selectedProducts": data.get("selectedProducts", old_order["selectedProducts"]),
+        "totalAmount": data.get("totalAmount", old_order["totalAmount"])
+    }
+    
+    # Replace the order in the list
+    orders_data[form_name]["orders"][idx] = updated_order
+    
+    # Recalculate aggregates
+    recalc_aggregates(orders_data, form_name)
+    write_orders(orders_data)
+    
+    return jsonify({"success": True, "order": updated_order})
+
+# Delete an order
+@app.route('/api/orders/<order_id>', methods=['DELETE'])
+def remove_order(order_id):
+    form_name, idx, order = find_order(order_id)
+    if not order:
+        return jsonify({"success": False, "error": "Order not found"}), 404
+    
+    orders_data = read_orders()
+    # Remove the order
+    del orders_data[form_name]["orders"][idx]
+    
+    # Recalculate aggregates
+    recalc_aggregates(orders_data, form_name)
+    write_orders(orders_data)
+    
+    return jsonify({"success": True})
+
+# Helper to recalculate aggregates after changes
+def recalc_aggregates(orders_data, form_name):
+    products_agg = {}
+    for order in orders_data[form_name]["orders"]:
+        for product_name, product in order["selectedProducts"].items():
+            if product_name not in products_agg:
+                products_agg[product_name] = {"total_amount":0, "extras": {}}
+            for extra_name, amount in product["extras"].items():
+                if extra_name not in products_agg[product_name]["extras"]:
+                    products_agg[product_name]["extras"][extra_name] = {"amount":0, "names": []}
+                products_agg[product_name]["extras"][extra_name]["amount"] += amount
+                products_agg[product_name]["extras"][extra_name]["names"].append(order["name"])
+            products_agg[product_name]["total_amount"] += amount
+    orders_data[form_name]["products"] = products_agg
 
 if __name__ == '__main__':
     app.run(port=5000, host="0.0.0.0")

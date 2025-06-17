@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Product from './Product';
-import { submitOrder, getProducts, updateInventory } from '../services/api';
+import { submitOrder, updateOrder, deleteOrder, getProducts } from '../services/api';
 
 interface Extra {
   name: string;
@@ -17,28 +17,52 @@ interface ProductData {
   inventory: number;
 }
 
+interface Order {
+  id: string;
+  name: string;
+  phone: string;
+  date: string;
+  comment: string;
+  selectedProducts: { 
+    [key: string]: {
+      selected: boolean;
+      extras: { [extraName: string]: number };
+    } 
+  };
+  totalAmount: number;
+  timestamp: string;
+}
+
 interface FormProps {
   date: string;
   products: ProductData[];
-  above_comment?: string; // Add comment as an optional prop
-  onPlaceAnotherOrder: any;
+  initialOrder?: Order | null;
+  onUpdate?: (orderData: any) => void;
+  onDelete?: () => void;
+  loading?: boolean;
+  onPlaceAnotherOrder?: () => void;
+  above_comment?: string;
 }
 
-function Form({ date, products, above_comment, onPlaceAnotherOrder }: FormProps) {
-  // Use the provided comment or default to an empty string
-  const [comment, setComment] = useState('');
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+function Form({ 
+  date, 
+  products, 
+  initialOrder,
+  onUpdate,
+  onDelete,
+  loading: externalLoading = false,
+  onPlaceAnotherOrder,
+  above_comment
+}: FormProps) {
+  // Initialize state from initialOrder if provided
+  const [comment, setComment] = useState(initialOrder?.comment || '');
+  const [name, setName] = useState(initialOrder?.name || '');
+  const [phone, setPhone] = useState(initialOrder?.phone || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [inventoryErrors, setInventoryErrors] = useState<{[key: string]: string}>({});
-  
-  // Add state for validation errors
-  const [errors, setErrors] = useState({
-    name: '',
-    phone: ''
-  });
+  const [errors, setErrors] = useState({ name: '', phone: '' });
   
   // Track selected products and their extras
   const [selectedProducts, setSelectedProducts] = useState<{[key: string]: {
@@ -46,32 +70,42 @@ function Form({ date, products, above_comment, onPlaceAnotherOrder }: FormProps)
     extras: {[extraName: string]: number};
   }}>({});
   
-  // Initialize selectedProducts with empty selections when products change
+  // Initialize selectedProducts when products change or when initialOrder is provided
   useEffect(() => {
     const initialSelections: {[key: string]: {selected: boolean; extras: {[extraName: string]: number}}} = {};
+    
     products.forEach(prod => {
       const extraSelections: {[extraName: string]: number} = {};
       prod.extras.forEach(extra => {
         extraSelections[extra.name] = extra.minAmount;
       });
       
-      initialSelections[prod.name] = {
-        selected: false,
-        extras: extraSelections
-      };
+      // If we have an initial order, use its data
+      if (initialOrder?.selectedProducts[prod.name]) {
+        initialSelections[prod.name] = {
+          selected: true,
+          extras: initialOrder.selectedProducts[prod.name].extras
+        };
+      } else {
+        initialSelections[prod.name] = {
+          selected: false,
+          extras: extraSelections
+        };
+      }
     });
+    
     setSelectedProducts(initialSelections);
     
-    // Reset form state when products change
+    // Reset success state when products change
     setSubmitSuccess(false);
     setSubmitError(null);
-  }, [products]);
+  }, [products, initialOrder]);
 
-
+  // Validate inventory when selected products change
   useEffect(() => {
     validateInventory();
   }, [selectedProducts]);
-  
+
   // Calculate total amount based on selected products and extras
   const calculateTotal = () => {
     let total = 0;
@@ -209,65 +243,90 @@ function Form({ date, products, above_comment, onPlaceAnotherOrder }: FormProps)
         phone,
         date,
         comment,
-        selectedProducts,
+        selectedProducts: Object.keys(selectedProducts).reduce((acc, productName) => {
+          const product = selectedProducts[productName];
+          if (product.selected) {
+            acc[productName] = {
+              extras: product.extras
+            };
+          }
+          return acc;
+        }, {} as { [key: string]: any }),
         totalAmount: calculateTotal()
       };
       
-      // Submit order to backend
-      await submitOrder(orderData);
-      
-      // Prepare inventory updates
-      const inventoryUpdates = Object.keys(selectedProducts)
-        .filter(productName => selectedProducts[productName].selected)
-        .map(productName => {
-          const product = products.find(p => p.name === productName);
-          const productSelection = selectedProducts[productName];
-          
-          // Calculate new inventory by subtracting extras
-          let newInventory = product?.inventory || 0;
-          product?.extras.forEach(extra => {
-            const orderedAmount = productSelection.extras[extra.name] || 0;
-            newInventory -= orderedAmount;
+      if (initialOrder && onUpdate) {
+        // Update existing order
+        await updateOrder(initialOrder.id, orderData);
+        setSubmitSuccess(true);
+        if (onUpdate) onUpdate(orderData);
+      } else {
+        // Submit new order to backend
+        await submitOrder(orderData);
+        
+        // Reset form on success
+        setName('');
+        setPhone('');
+        setComment('');
+        
+        // Reset product selections
+        const initialSelections: {[key: string]: {selected: boolean; extras: {[extraName: string]: number}}} = {};
+        products.forEach(prod => {
+          const extraSelections: {[extraName: string]: number} = {};
+          prod.extras.forEach(extra => {
+            extraSelections[extra.name] = extra.minAmount;
           });
           
-          return {
-            name: productName,
-            inventory: Math.max(0, newInventory)
+          initialSelections[prod.name] = {
+            selected: false,
+            extras: extraSelections
           };
         });
-      
-      // Update inventory on the backend
-      await updateInventory(date, inventoryUpdates);
-      
-      // Reset form on success
-      setName('');
-      setPhone('');
-      setComment('');
-      
-      // Reset product selections
-      const initialSelections: {[key: string]: {selected: boolean; extras: {[extraName: string]: number}}} = {};
-      products.forEach(prod => {
-        const extraSelections: {[extraName: string]: number} = {};
-        prod.extras.forEach(extra => {
-          extraSelections[extra.name] = extra.minAmount;
-        });
+        setSelectedProducts(initialSelections);
         
-        initialSelections[prod.name] = {
-          selected: false,
-          extras: extraSelections
-        };
-      });
-      setSelectedProducts(initialSelections);
-      
-      setSubmitSuccess(true);
+        setSubmitSuccess(true);
+      }
     } catch (error) {
       console.error('Error submitting order:', error);
-      setSubmitError('Failed to submit your order. Please try again.');
+      setSubmitError(initialOrder 
+        ? 'Failed to update your order. Please try again.' 
+        : 'Failed to submit your order. Please try again.');
       setSubmitSuccess(false);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handleDelete = async () => {
+    if (!initialOrder || !onDelete) return;
+    
+    const confirmDelete = window.confirm('Are you sure you want to delete this order? This action cannot be undone.');
+    if (!confirmDelete) return;
+    
+    try {
+      setIsSubmitting(true);
+      await deleteOrder(initialOrder.id);
+      if (onDelete) onDelete();
+    } catch (err) {
+      setSubmitError('Failed to delete order');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // If we're in edit mode and products haven't loaded yet
+  if (initialOrder && products.length === 0) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '300px' 
+      }}>
+        <p>Loading products for editing...</p>
+      </div>
+    );
+  }
   
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -285,7 +344,7 @@ function Form({ date, products, above_comment, onPlaceAnotherOrder }: FormProps)
       </div>
       
       <h1 style={{ textAlign: 'center', margin: '20px 0' }}>
-        Order Form for {date}
+        {initialOrder ? 'Edit Order' : 'Order Form'} for {date}
       </h1>
       
       {submitSuccess ? (
@@ -297,22 +356,33 @@ function Form({ date, products, above_comment, onPlaceAnotherOrder }: FormProps)
           marginBottom: '20px',
           textAlign: 'center'
         }}>
-          <h3>Your order has been submitted successfully!</h3>
-          <p>Thank you for your order. You will receive a confirmation message on your phone.</p>
-          <button
-            onClick={() => {setSubmitSuccess(false); onPlaceAnotherOrder();}}
-            style={{
-              backgroundColor: '#5cb85c',
-              color: 'white',
-              padding: '10px 20px',
-              border: 'none',
-              borderRadius: '4px',
-              marginTop: '15px',
-              cursor: 'pointer'
-            }}
-          >
-            Place Another Order
-          </button>
+          <h3>
+            {initialOrder 
+              ? 'Order updated successfully!' 
+              : 'Your order has been submitted successfully!'}
+          </h3>
+          <p>
+            {initialOrder 
+              ? 'The order has been updated with your changes.'
+              : 'Thank you for your order. You will receive a confirmation message on your phone.'}
+          </p>
+          
+          {!initialOrder && onPlaceAnotherOrder && (
+            <button
+              onClick={() => {setSubmitSuccess(false); onPlaceAnotherOrder();}}
+              style={{
+                backgroundColor: '#5cb85c',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '4px',
+                marginTop: '15px',
+                cursor: 'pointer'
+              }}
+            >
+              Place Another Order
+            </button>
+          )}
         </div>
       ) : (
         <>
@@ -440,30 +510,68 @@ function Form({ date, products, above_comment, onPlaceAnotherOrder }: FormProps)
               </div>
             )}
             
-            <p>
-              At the end of the order, the app will send a message to your phone with your name, the items you ordered, and the total amount due. Please make sure the message is correct and includes all order details 🙏🏻. On Tuesdays and Fridays, after baking is complete, a message with the total amount due will be sent. I would appreciate your confirmation that this message is acceptable to you.
-            </p>
+            {!initialOrder && (
+              <p>
+                At the end of the order, the app will send a message to your phone with your name, 
+                the items you ordered, and the total amount due. Please make sure the message is 
+                correct and includes all order details 🙏🏻. On Tuesdays and Fridays, after baking 
+                is complete, a message with the total amount due will be sent. I would appreciate 
+                your confirmation that this message is acceptable to you.
+              </p>
+            )}
 
             <div style={{ height: '30px' }}></div>
 
-            <button 
-              onClick={handleSubmitOrder}
-              disabled={isSubmitting}
-              style={{
-                backgroundColor: '#4CAF50',
-                color: 'white',
-                padding: '12px 24px',
-                fontSize: '16px',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                fontWeight: 'bold',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                opacity: isSubmitting ? 0.7 : 1
-              }}
-            >
-              {isSubmitting ? 'Submitting...' : 'Complete Order'}
-            </button>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '20px',
+              flexWrap: 'wrap'
+            }}>
+              {initialOrder && (
+                <button 
+                  onClick={handleDelete}
+                  disabled={isSubmitting || externalLoading}
+                  style={{
+                    backgroundColor: '#f44336',
+                    color: 'white',
+                    padding: '12px 24px',
+                    fontSize: '16px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: (isSubmitting || externalLoading) ? 'not-allowed' : 'pointer',
+                    fontWeight: 'bold',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    opacity: (isSubmitting || externalLoading) ? 0.7 : 1,
+                    minWidth: '180px'
+                  }}
+                >
+                  Delete Order
+                </button>
+              )}
+              
+              <button 
+                onClick={handleSubmitOrder}
+                disabled={isSubmitting || externalLoading}
+                style={{
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: (isSubmitting || externalLoading) ? 'not-allowed' : 'pointer',
+                  fontWeight: 'bold',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  opacity: (isSubmitting || externalLoading) ? 0.7 : 1,
+                  minWidth: '180px'
+                }}
+              >
+                {isSubmitting 
+                  ? (initialOrder ? 'Updating...' : 'Submitting...') 
+                  : (initialOrder ? 'Update Order' : 'Complete Order')}
+              </button>
+            </div>
             
             <div style={{ height: '80px' }}></div>
           </div>
