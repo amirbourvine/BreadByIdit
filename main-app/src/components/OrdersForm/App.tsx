@@ -1,8 +1,10 @@
+// App.tsx
 import { useState, useEffect } from 'react'
 import './App.css'
 import LeftPanel from './components/LeftPanel'
 import Form from './components/Form';
 import Home from './components/Home';
+import EditOrder from './components/EditOrder'; // New component
 import { getDates, getProducts } from './services/api';
 
 // Define the interfaces for Extra and ProductData
@@ -23,7 +25,8 @@ interface ProductData {
 
 function App() {
   const [pages, setPages] = useState<string[]>(["Home"]);
-  const [selectedPage, setSelectedPage] = useState<string>("Home");
+  const [selectedForm, setSelectedForm] = useState<string>("Home");
+  const [showEditOrder, setShowEditOrder] = useState<boolean>(false);
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,17 +51,17 @@ function App() {
     fetchDates();
   }, []);
 
-  // Fetch products when selected page changes
+  // Fetch products when selected form changes
   useEffect(() => {
     const fetchProductsForPage = async () => {
       // Skip if Home page is selected or if the page is not yet loaded
-      if (selectedPage === "Home" || !pages.includes(selectedPage)) {
+      if (selectedForm === "Home" || !pages.includes(selectedForm)) {
         return;
       }
 
       try {
         setLoading(true);
-        const response = await getProducts(selectedPage);
+        const response = await getProducts(selectedForm);
         setProducts(response.products);
         
         // Get comment from the response
@@ -71,8 +74,8 @@ function App() {
         
         setError(null);
       } catch (err) {
-        console.error(`Failed to fetch products for ${selectedPage}:`, err);
-        setError(`Failed to load products for ${selectedPage}. Please try again later.`);
+        console.error(`Failed to fetch products for ${selectedForm}:`, err);
+        setError(`Failed to load products for ${selectedForm}. Please try again later.`);
         setProducts([]);
         // Set default comment on error
         setComment("The bread comes sliced unless you specify otherwise here. You can also add additional notes here.");
@@ -82,15 +85,14 @@ function App() {
     };
 
     fetchProductsForPage();
-  }, [selectedPage, pages]);
-
+  }, [selectedForm, pages]);
 
   const onPlaceAnotherOrder = async () => {
     // Only fetch products if a specific date page is selected
-    if (selectedPage !== "Home") {
+    if (selectedForm !== "Home") {
       try {
         setLoading(true);
-        const response = await getProducts(selectedPage);
+        const response = await getProducts(selectedForm);
         setProducts(response.products);
         
         // Update comment if a new one is provided
@@ -100,13 +102,25 @@ function App() {
         
         setError(null);
       } catch (err) {
-        console.error(`Failed to refresh products for ${selectedPage}:`, err);
-        setError(`Failed to refresh products for ${selectedPage}. Please try again later.`);
+        console.error(`Failed to refresh products for ${selectedForm}:`, err);
+        setError(`Failed to refresh products for ${selectedForm}. Please try again later.`);
         setProducts([]);
       } finally {
         setLoading(false);
       }
     }
+  };
+
+  // Handler for selecting a form to place a new order
+  const handleSelectForm = (form: string) => {
+    setSelectedForm(form);
+    setShowEditOrder(false);
+  };
+
+  // Handler for showing the edit order view
+  const handleEditOrder = () => {
+    setShowEditOrder(true);
+    setSelectedForm("");
   };
 
   return (
@@ -120,11 +134,16 @@ function App() {
       left: 0,
       top: 0
     }}>
-      <LeftPanel pages={pages} onSelectPage={setSelectedPage} />
+      <LeftPanel 
+        pages={pages} 
+        onSelectForm={handleSelectForm} 
+        onEditOrder={handleEditOrder}
+      />
       <div style={{ 
-        marginLeft: '256px', 
+        marginLeft: 'min(256px, 25vw)', 
         padding: '16px', 
-        flex: '1' 
+        flex: '1',
+        width: 'calc(100% - min(256px, 25vw))'
       }}>
         {loading ? (
           <div style={{ 
@@ -145,11 +164,13 @@ function App() {
           }}>
             <p>{error}</p>
           </div>
-        ) : selectedPage === "Home" ? (
+        ) : showEditOrder ? (
+          <EditOrder />
+        ) : selectedForm === "Home" ? (
           <Home />
         ) : (
           <Form 
-            date={selectedPage} 
+            date={selectedForm} 
             products={products} 
             above_comment={comment}
             onPlaceAnotherOrder={onPlaceAnotherOrder}
@@ -160,4 +181,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
