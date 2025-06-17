@@ -108,7 +108,6 @@ function EditOrder() {
     
     try {
       setLoading(true);
-      await deleteOrder(selectedOrder.id);
       setStep(5); // Show deletion success
     } catch (err) {
       setError('Failed to delete order');
