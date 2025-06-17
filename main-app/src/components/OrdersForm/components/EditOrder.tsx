@@ -1,6 +1,6 @@
 // EditOrder.tsx
 import { useState, useEffect } from 'react';
-import { getDates, updateOrder, deleteOrder, getProducts, getOrders } from '../services/api';
+import { getDates, updateOrder, getProducts, getOrders } from '../services/api';
 import Form from './Form';
 
 interface Order {
