@@ -48,7 +48,7 @@ function App() {
 
   // Password protection
   const handlePasswordSubmit = () => {
-    if (passwordInput === "hello") {
+    if (passwordInput === "amiR21") {
       setIsAuthenticated(true);
       setShowPasswordPopup(false);
       setPasswordError('');
