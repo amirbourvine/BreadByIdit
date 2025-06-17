@@ -104,7 +104,9 @@ function EditOrder() {
 
   // Handle order deletion
   const handleDeleteOrder = async () => {
+    console.log("here 01");
     if (!selectedOrder) return;
+    console.log("here 02");
     
     try {
       setLoading(true);

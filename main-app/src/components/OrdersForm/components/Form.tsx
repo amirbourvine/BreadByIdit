@@ -303,13 +303,18 @@ function Form({
     if (!initialOrder || !onDelete) return;
     
     const confirmDelete = window.confirm('Are you sure you want to delete this order? This action cannot be undone.');
+    console.log("here 1");
     if (!confirmDelete) return;
+    console.log("here 2");
     
     try {
       setIsSubmitting(true);
+      console.log("here 3");
       await deleteOrder(initialOrder.id);
+      console.log("here 4");
       if (onDelete) onDelete();
     } catch (err) {
+      console.log("error Form.tsx");
       setSubmitError('Failed to delete order');
     } finally {
       setIsSubmitting(false);
