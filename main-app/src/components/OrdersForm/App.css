@@ -40,3 +40,18 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Add to App.css for better mobile experience */
+@media (max-width: 768px) {
+  .left-panel {
+    width: 80vw !important;
+    max-width: 300px;
+    z-index: 100;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Prevent body scroll when panel is open on mobile */
+body.panel-open {
+  overflow: hidden;
+}
