@@ -51,7 +51,7 @@ function App() {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       
-      // Auto-close panel on mobile when resizing to mobile
+      // Auto-close panel when resizing to mobile
       if (mobile) {
         setPanelOpen(false);
       }

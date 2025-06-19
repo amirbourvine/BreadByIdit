@@ -59,7 +59,7 @@ function LeftPanel({
     <div 
       className="left-panel"
       style={{ 
-        position: isMobile ? 'fixed' : 'fixed',
+        position: 'fixed',
         left: isMobile ? (panelOpen ? 0 : '-100%') : 0,
         top: 0,
         height: '100vh', 

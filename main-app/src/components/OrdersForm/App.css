@@ -60,30 +60,11 @@ body.panel-open {
 }
 
 /* Smooth transitions for panel */
-.left-panel,
-.main-content {
+.left-panel {
   transition: all 0.3s ease;
 }
 
-/* Collapsed panel styling */
-.left-panel.collapsed {
-  width: 60px !important;
-  padding: 16px 0 !important;
-}
-
-/* Collapsed panel content */
-.collapsed-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-/* Vertical text in collapsed panel */
-.vertical-text {
-  writing-mode: vertical-lr;
-  transform: rotate(180deg);
-  white-space: nowrap;
-  margin-bottom: 16px;
+/* Main content transitions */
+.main-content {
+  transition: margin-left 0.3s ease;
 }
