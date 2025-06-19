@@ -1,10 +1,13 @@
+/* Reset default root styles for better layout control */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+  height: 100%;
 }
 
+/* Original logo styles */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -41,20 +44,106 @@
   color: #888;
 }
 
-
-/* Ensure proper centering of content */
-.orders-container {
-  display: flex;
-  justify-content: center;
-  margin-left: min(256px, 25vw);
-  width: calc(100% - min(256px, 25vw));
-  height: 100vh;
-  overflow: auto;
-  padding: 1rem;
+/* Enhanced mobile styles */
+@media (max-width: 768px) {
+  .left-panel {
+    width: 85vw !important;
+    max-width: 320px !important;
+    z-index: 30 !important;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2) !important;
+    border-top-right-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+  }
+  
+  /* Improve touch targets on mobile */
+  .left-panel button {
+    min-height: 48px !important;
+    font-size: 1rem !important;
+  }
+  
+  /* Better spacing on mobile */
+  .left-panel h2 {
+    font-size: 1.5rem !important;
+    margin-top: 40px !important;
+    margin-bottom: 24px !important;
+  }
 }
 
-/* Ensure box-sizing for all elements */
-* {
-  box-sizing: border-box;
+/* Prevent body scroll when panel is open on mobile */
+body.panel-open {
+  overflow: hidden;
 }
 
+/* Smooth transitions for all interactive elements */
+button {
+  transition: all 0.2s ease;
+}
+
+/* Improved focus states for accessibility */
+button:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Better hover states */
+button:hover {
+  transform: translateY(-1px);
+}
+
+/* Ensure full height layout */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling for webkit browsers */
+.left-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.left-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.left-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.left-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive font sizes */
+@media (max-width: 480px) {
+  .left-panel h2 {
+    font-size: 1.25rem !important;
+  }
+  
+  .left-panel button {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .left-panel {
+    border: 2px solid white;
+  }
+  
+  .left-panel button {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

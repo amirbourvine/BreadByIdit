@@ -13,6 +13,9 @@ interface LeftPanelProps {
   onViewProducts: (form: string) => void; 
   onViewClients: (form: string) => void;
   onEditSourdough: () => void;
+  panelOpen: boolean;
+  togglePanel: () => void;
+  isMobile: boolean;
 }
 
 function LeftPanel({ 
@@ -26,7 +29,10 @@ function LeftPanel({
   onDeleteProduct,
   onViewProducts,
   onViewClients,
-  onEditSourdough
+  onEditSourdough,
+  panelOpen,
+  togglePanel,
+  isMobile
 }: LeftPanelProps) {
   const [visibility, setVisibility] = useState<{ [key: string]: boolean }>({});
   const [openSections, setOpenSections] = useState({
@@ -43,6 +49,38 @@ function LeftPanel({
     });
     setVisibility(initialVisibility);
   }, [forms]);
+
+  // Close dropdown when panel closes
+  useEffect(() => {
+    if (!panelOpen) {
+      setOpenSections({
+        editForms: true,
+        viewOrders: false,
+        editProducts: false
+      });
+    }
+  }, [panelOpen]);
+
+  // Handle clicks outside panel on mobile
+  useEffect(() => {
+    if (!isMobile || !panelOpen) return;
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      const panel = document.querySelector('.left-panel');
+      const target = e.target as Node;
+      
+      // Don't close if clicking on the toggle button or panel itself
+      if (panel && !panel.contains(target)) {
+        const toggleButton = document.querySelector('[data-toggle-button]');
+        if (toggleButton && !toggleButton.contains(target)) {
+          togglePanel();
+        }
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMobile, panelOpen, togglePanel]);
 
   // Handle checkbox toggle
   const handleCheckboxChange = (form: string) => {
