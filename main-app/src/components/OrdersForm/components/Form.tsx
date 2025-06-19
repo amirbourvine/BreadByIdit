@@ -206,7 +206,7 @@ function Form({
             });
             var availableInventory = (currentProduct.inventory || 0)-products_ordered_before[productName];
             if (initialOrder && onUpdate) {
-              availableInventory += availableInventory += (initialOrder && initialOrder.selectedProducts[productName]) ? Object.values(initialOrder.selectedProducts[productName].extras).reduce((acc, amount) => acc + amount, 0) : 0; //add the amount in the initial order
+              availableInventory += (initialOrder && initialOrder.selectedProducts[productName]) ? Object.values(initialOrder.selectedProducts[productName].extras).reduce((acc, amount) => acc + amount, 0) : 0; //add the amount in the initial order
             }
             if (orderedAmount > availableInventory) {
                 newInventoryErrors[productName] = `We only have ${availableInventory} left`;
