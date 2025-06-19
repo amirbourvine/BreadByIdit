@@ -45,31 +45,6 @@ function App() {
   const [showOrdersProducts, setShowOrdersProducts] = useState<boolean>(false);
   const [selectedOrdersProductsForm, setSelectedOrdersProductsForm] = useState<string>("");
   const [showEditSourdough, setShowEditSourdough] = useState<boolean>(false);
-  
-  // Mobile responsive states
-  const [panelOpen, setPanelOpen] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  // Detect mobile screens
-  useEffect(() => {
-    const handleResize = () => {
-      const wasMobile = isMobile;
-      const newIsMobile = window.innerWidth < 768;
-      setIsMobile(newIsMobile);
-      
-      // If switching from mobile to desktop, open panel
-      if (wasMobile && !newIsMobile) {
-        setPanelOpen(true);
-      }
-      // If switching from desktop to mobile, close panel
-      if (!wasMobile && newIsMobile) {
-        setPanelOpen(false);
-      }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isMobile]);
 
   // Password protection
   const handlePasswordSubmit = () => {
@@ -102,11 +77,6 @@ function App() {
     setShowDeleteProduct(false);
     setShowOrdersClients(false);
     setShowOrdersProducts(false);
-    setSelectedForm("");
-    // Close panel on mobile after selection
-    if (isMobile) {
-      setPanelOpen(false);
-    }
   };
 
   const handleViewClients = (form: string) => {
@@ -116,11 +86,6 @@ function App() {
     setShowAddNewProduct(false);
     setShowDeleteProduct(false);
     setShowEditSourdough(false);
-    setSelectedForm("");
-    // Close panel on mobile after selection
-    if (isMobile) {
-      setPanelOpen(false);
-    }
   };
 
   const handleViewProducts = (form: string) => {
@@ -130,11 +95,6 @@ function App() {
     setShowAddNewProduct(false);
     setShowDeleteProduct(false);
     setShowEditSourdough(false);
-    setSelectedForm("");
-    // Close panel on mobile after selection
-    if (isMobile) {
-      setPanelOpen(false);
-    }
   };
 
   const fetchForms = async () => {
@@ -182,10 +142,6 @@ function App() {
     setShowOrdersClients(false);
     setShowOrdersProducts(false);
     setShowEditSourdough(false);
-    // Close panel on mobile after selection
-    if (isMobile) {
-      setPanelOpen(false);
-    }
   };
 
   function getNextFridayOrTuesday(): string {
@@ -300,11 +256,6 @@ function App() {
     setShowOrdersClients(false);
     setShowOrdersProducts(false);
     setShowEditSourdough(false);
-    setSelectedForm("");
-    // Close panel on mobile after selection
-    if (isMobile) {
-      setPanelOpen(false);
-    }
   };
 
   const handleShowDeleteProduct = () => {
@@ -313,11 +264,6 @@ function App() {
     setShowOrdersClients(false);
     setShowOrdersProducts(false);
     setShowEditSourdough(false);
-    setSelectedForm("");
-    // Close panel on mobile after selection
-    if (isMobile) {
-      setPanelOpen(false);
-    }
   };
 
   const handleSaveNewProduct = async (product: ProductData) => {
@@ -331,35 +277,6 @@ function App() {
 
   const handleCancelDeleteProduct = () => {
     setShowDeleteProduct(false);
-  };
-
-  const togglePanel = () => {
-    setPanelOpen(!panelOpen);
-  };
-
-  // Calculate main content margin based on panel state and screen size
-  const getMainContentStyle = () => {
-    if (isMobile) {
-      // On mobile, main content always takes full width
-      return {
-        marginLeft: 0,
-        flex: '1',
-        width: '100%',
-        overflow: 'auto',
-        position: 'relative' as const,
-        minHeight: '100vh'
-      };
-    } else {
-      // On desktop, adjust margin based on panel state
-      return {
-        marginLeft: panelOpen ? '256px' : '0',
-        flex: '1',
-        overflow: 'auto',
-        position: 'relative' as const,
-        transition: 'margin-left 0.3s ease',
-        minHeight: '100vh'
-      };
-    }
   };
 
   if (!isAuthenticated) {
@@ -437,63 +354,8 @@ function App() {
       padding: 0,
       position: 'absolute',
       left: 0,
-      top: 0,
-      overflow: 'hidden'
+      top: 0
     }}>
-      {/* Overlay for mobile when panel is open */}
-      {isMobile && panelOpen && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 25
-          }}
-          onClick={() => setPanelOpen(false)}
-        />
-      )}
-
-      {/* Expand button for desktop when panel is collapsed */}
-      {!isMobile && !panelOpen && (
-        <button
-          onClick={togglePanel}
-          style={{
-            position: 'fixed',
-            top: '20px',
-            left: '20px',
-            zIndex: 20,
-            backgroundColor: '#1f2937',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            padding: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-            fontSize: '16px',
-            cursor: 'pointer',
-            width: '48px',
-            height: '48px',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#374151';
-            e.currentTarget.style.transform = 'scale(1.05)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = '#1f2937';
-            e.currentTarget.style.transform = 'scale(1)';
-          }}
-          title="Expand panel"
-        >
-          ▶
-        </button>
-      )}
-
       <LeftPanel 
         forms={forms} 
         onSelectForm={handleSelectForm}
@@ -503,98 +365,61 @@ function App() {
         onSaveVisibility={saveVisibilityChanges}
         onAddNewProduct={handleShowAddNewProduct}
         onDeleteProduct={handleShowDeleteProduct}
-        onViewProducts={handleViewProducts}
         onViewClients={handleViewClients}
+        onViewProducts={handleViewProducts}
         onEditSourdough={handleShowEditSourdough}
-        panelOpen={panelOpen}
-        togglePanel={togglePanel}
-        isMobile={isMobile}
       />
-      
-      {/* Main content area */}
-      <div style={getMainContentStyle()}>
-        {/* Toggle button for mobile */}
-        {isMobile && (
-          <button 
-            onClick={togglePanel}
-            style={{
-              position: 'fixed',
-              top: '16px',
-              left: '16px',
-              zIndex: 20,
-              backgroundColor: '#1f2937',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-              fontSize: '18px',
-              width: '48px',
-              height: '48px'
-            }}
-          >
-            {panelOpen ? '✕' : '☰'}
-          </button>
+      <div className="orders-container">
+        {loading ? (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100%' 
+          }}>
+            <p>Loading...</p>
+          </div>
+        ) : error ? (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100%',
+            color: 'red'
+          }}>
+            <p>{error}</p>
+          </div>
+        ) : showOrdersClients ? (
+          <OrdersClients 
+            formName={selectedOrdersClientsForm}
+          />
+        ) : showOrdersProducts ? (
+          <OrdersProducts 
+            formName={selectedOrdersProductsForm}
+          />
+        ) : showAddNewProduct ? (
+          <AddNewItem 
+            onSave={handleSaveNewProduct}
+            onCancel={handleCancelNewProduct}
+          />
+        ) : showDeleteProduct ? (
+          <DeleteProduct 
+            onCancel={handleCancelDeleteProduct}
+          />
+        ) : showEditSourdough ? (
+          <EditContents 
+            onClose={() => setShowEditSourdough(false)}
+          />
+        ) : selectedForm === "Home" ? (
+          <Home />
+        ) : (
+          <FormEditor 
+            formName={selectedForm} 
+            products={products} 
+            onFormUpdated={fetchForms}
+            initialComment={formComment}
+          />
         )}
-        
-        <div style={{ 
-          padding: isMobile ? '80px 16px 16px 16px' : (panelOpen ? '16px' : '80px 16px 16px 16px'),
-          minHeight: '100%'
-        }}>
-          {loading ? (
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center', 
-              height: '60vh' 
-            }}>
-              <p>Loading...</p>
-            </div>
-          ) : error ? (
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center', 
-              height: '60vh',
-              color: 'red'
-            }}>
-              <p>{error}</p>
-            </div>
-          ) : showOrdersClients ? (
-            <OrdersClients 
-              formName={selectedOrdersClientsForm}
-            />
-          ) : showOrdersProducts ? (
-            <OrdersProducts 
-              formName={selectedOrdersProductsForm}
-            />
-          ) : showAddNewProduct ? (
-            <AddNewItem 
-              onSave={handleSaveNewProduct}
-              onCancel={handleCancelNewProduct}
-            />
-          ) : showDeleteProduct ? (
-            <DeleteProduct 
-              onCancel={handleCancelDeleteProduct}
-            />
-          ) : showEditSourdough ? (
-            <EditContents 
-              onClose={() => setShowEditSourdough(false)}
-            />
-          ) : selectedForm === "Home" ? (
-            <Home />
-          ) : (
-            <FormEditor 
-              formName={selectedForm} 
-              products={products} 
-              onFormUpdated={fetchForms}
-              initialComment={formComment}
-            />
-          )}
-        </div>
       </div>
 
       {/* Form Name Dialog */}
@@ -609,7 +434,7 @@ function App() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          zIndex: 40
+          zIndex: 20
         }}>
           <div style={{
             backgroundColor: 'white',
