@@ -482,7 +482,7 @@ def update_form(form_name):
         inventory = product.get('inventory', 12)
         
         # Ensure soldOut is set based on inventory
-        soldOut = (inventory == (products_data[product["name"]])["total_amount"])
+        soldOut = (inventory == (products_data.get(product["name"], {}).get("total_amount", 0)))
         
         processed_product = {
             **product,
@@ -526,7 +526,7 @@ def get_products(date):
                 if 'inventory' not in product:
                     product['inventory'] = 12
                 # Update soldOut based on inventory
-                product['soldOut'] = (product.get('inventory', 0) == (products_data[product["name"]])["total_amount"])
+                product['soldOut'] = (product.get('inventory', 0) == (products_data.get(product["name"], {}).get("total_amount", 0)))
             
             # Return products, metadata, and comment if available
             return jsonify({
