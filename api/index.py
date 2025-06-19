@@ -588,11 +588,9 @@ def update_sourdough_amounts():
 
 # Helper function to find order by ID
 def find_order(order_id):
-    print("looking for: ", order_id, " ", type(order_id))
     orders_data = read_orders()
     for form_name, form_data in orders_data.items():
         for idx, order in enumerate(form_data["orders"]):
-            print("order[id]: ", order["id"], " ", type(order["id"]))
             if order["id"] == order_id:
                 return form_name, idx, order
     return None, None, None
