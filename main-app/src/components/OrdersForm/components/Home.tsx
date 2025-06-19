@@ -1,9 +1,8 @@
-  
 function Home() {
     return (
-    <div>
-        <h1>Welcome to the Home Page</h1>
-    </div>
+        <div className="flex items-center justify-center min-h-screen">
+            <h1>Welcome to the Home Page</h1>
+        </div>
     )
 }
 
