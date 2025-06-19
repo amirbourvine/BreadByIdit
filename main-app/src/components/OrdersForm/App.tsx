@@ -189,6 +189,44 @@ function App() {
         />
       )}
 
+      {/* Expand button for desktop when panel is collapsed */}
+      {!isMobile && !panelOpen && (
+        <button
+          onClick={togglePanel}
+          style={{
+            position: 'fixed',
+            top: '20px',
+            left: '20px',
+            zIndex: 20,
+            backgroundColor: '#1f2937',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+            fontSize: '16px',
+            cursor: 'pointer',
+            width: '48px',
+            height: '48px',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = '#374151';
+            e.currentTarget.style.transform = 'scale(1.05)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = '#1f2937';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+          title="Expand panel"
+        >
+          ▶
+        </button>
+      )}
+
       <LeftPanel 
         pages={pages} 
         onSelectForm={handleSelectForm} 
@@ -228,7 +266,7 @@ function App() {
         )}
         
         <div style={{ 
-          padding: isMobile ? '80px 16px 16px 16px' : '16px',
+          padding: isMobile ? '80px 16px 16px 16px' : (panelOpen ? '16px' : '80px 16px 16px 16px'),
           minHeight: '100%'
         }}>
           {loading ? (
