@@ -32,38 +32,26 @@ function App() {
   const [panelOpen, setPanelOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Add body class when panel is open on mobile
-  useEffect(() => {
-    if (isMobile && panelOpen) {
-      document.body.classList.add('panel-open');
-    } else {
-      document.body.classList.remove('panel-open');
-    }
-    
-    return () => {
-      document.body.classList.remove('panel-open');
-    };
-  }, [isMobile, panelOpen]);
-
   // Detect mobile screens
   useEffect(() => {
     const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
+      const wasMobile = isMobile;
+      const newIsMobile = window.innerWidth < 768;
+      setIsMobile(newIsMobile);
       
-      // Auto-close panel when resizing to mobile
-      if (mobile) {
-        setPanelOpen(false);
-      }
-      // Auto-open panel when resizing to desktop if it was previously open
-      else if (!mobile && !panelOpen) {
+      // If switching from mobile to desktop, open panel
+      if (wasMobile && !newIsMobile) {
         setPanelOpen(true);
+      }
+      // If switching from desktop to mobile, close panel
+      if (!wasMobile && newIsMobile) {
+        setPanelOpen(false);
       }
     };
     
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [panelOpen]);
+  }, [isMobile]);
 
   // Fetch available dates
   useEffect(() => {
@@ -129,13 +117,48 @@ function App() {
   const handleSelectForm = (form: string) => {
     setSelectedForm(form);
     setShowEditOrder(false);
-    if (isMobile) setPanelOpen(false);
+    // Close panel on mobile after selection
+    if (isMobile) {
+      setPanelOpen(false);
+    }
   };
 
   const handleEditOrder = () => {
     setShowEditOrder(true);
     setSelectedForm("");
-    if (isMobile) setPanelOpen(false);
+    // Close panel on mobile after selection
+    if (isMobile) {
+      setPanelOpen(false);
+    }
+  };
+
+  const togglePanel = () => {
+    setPanelOpen(!panelOpen);
+  };
+
+  // Calculate main content margin based on panel state and screen size
+  const getMainContentStyle = () => {
+    if (isMobile) {
+      // On mobile, main content always takes full width
+      return {
+        marginLeft: 0,
+        flex: '1',
+        width: '100%',
+        overflow: 'auto',
+        position: 'relative' as const,
+        minHeight: '100vh'
+      };
+    } else {
+      // On desktop, adjust margin based on panel state
+      return {
+        marginLeft: panelOpen ? '256px' : '0',
+        flex: '1',
+        overflow: 'auto',
+        position: 'relative' as const,
+        transition: 'margin-left 0.3s ease',
+        minHeight: '100vh'
+      };
+    }
   };
 
   return (
@@ -150,54 +173,70 @@ function App() {
       top: 0,
       overflow: 'hidden'
     }}>
+      {/* Overlay for mobile when panel is open */}
+      {isMobile && panelOpen && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 25
+          }}
+          onClick={() => setPanelOpen(false)}
+        />
+      )}
+
       <LeftPanel 
         pages={pages} 
         onSelectForm={handleSelectForm} 
         onEditOrder={handleEditOrder}
         panelOpen={panelOpen}
-        setPanelOpen={setPanelOpen}
+        togglePanel={togglePanel}
         isMobile={isMobile}
       />
       
       {/* Main content area */}
-      <div style={{ 
-        marginLeft: !isMobile && panelOpen ? 'min(256px, 25vw)' : 0,
-        flex: '1',
-        width: '100%',
-        overflow: 'auto',
-        position: 'relative',
-        transition: 'margin-left 0.3s ease'
-      }}>
+      <div style={getMainContentStyle()}>
         {/* Toggle button for mobile */}
         {isMobile && (
           <button 
-            onClick={() => setPanelOpen(!panelOpen)}
+            onClick={togglePanel}
             style={{
-              position: 'absolute',
-              top: '10px',
-              left: '10px',
+              position: 'fixed',
+              top: '16px',
+              left: '16px',
               zIndex: 20,
               backgroundColor: '#1f2937',
               color: 'white',
               border: 'none',
-              borderRadius: '4px',
-              padding: '8px',
+              borderRadius: '8px',
+              padding: '12px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              fontSize: '18px',
+              width: '48px',
+              height: '48px'
             }}
           >
             {panelOpen ? '✕' : '☰'}
           </button>
         )}
         
-        <div style={{ padding: '16px' }}>
+        <div style={{ 
+          padding: isMobile ? '80px 16px 16px 16px' : '16px',
+          minHeight: '100%'
+        }}>
           {loading ? (
             <div style={{ 
               display: 'flex', 
               justifyContent: 'center', 
               alignItems: 'center', 
-              height: '100%' 
+              height: '60vh' 
             }}>
               <p>Loading...</p>
             </div>
@@ -206,7 +245,7 @@ function App() {
               display: 'flex', 
               justifyContent: 'center', 
               alignItems: 'center', 
-              height: '100%',
+              height: '60vh',
               color: 'red'
             }}>
               <p>{error}</p>
