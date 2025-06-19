@@ -250,3 +250,25 @@ export const getProductsOrdered = async (formName: string): Promise<{ [key: stri
     throw error;
   }
 };
+
+export const moveOrder = async (orderId: string, targetForm: string) => {
+  try {
+    const response = await fetch(`/api/orders/${orderId}/move`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ target_form: targetForm })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to move order');
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Error moving order:', error);
+    throw error;
+  }
+};

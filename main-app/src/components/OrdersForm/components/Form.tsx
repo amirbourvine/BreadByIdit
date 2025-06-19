@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
 import Product from './Product';
-import { submitOrder, updateOrder, deleteOrder, getProducts, getProductsOrdered } from '../services/api';
+import { 
+  submitOrder, 
+  updateOrder, 
+  deleteOrder, 
+  getProducts, 
+  getProductsOrdered,
+  getDates,
+  moveOrder
+} from '../services/api';
 
 interface Extra {
   name: string;
@@ -64,6 +72,13 @@ function Form({
   const [inventoryErrors, setInventoryErrors] = useState<{[key: string]: string}>({});
   const [errors, setErrors] = useState({ name: '', phone: '' });
   
+  // New state for move functionality
+  const [showMoveDialog, setShowMoveDialog] = useState(false);
+  const [targetForm, setTargetForm] = useState('');
+  const [availableForms, setAvailableForms] = useState<string[]>([]);
+  const [moveLoading, setMoveLoading] = useState(false);
+  const [moveError, setMoveError] = useState<string | null>(null);
+  
   // Track selected products and their extras
   const [selectedProducts, setSelectedProducts] = useState<{[key: string]: {
     selected: boolean;
@@ -100,6 +115,23 @@ function Form({
     setSubmitSuccess(false);
     setSubmitError(null);
   }, [products, initialOrder]);
+
+  // Fetch available forms when component mounts
+  useEffect(() => {
+    const fetchForms = async () => {
+      try {
+        const dates = await getDates();
+        // Filter out current form
+        setAvailableForms(dates.filter(f => f !== date));
+      } catch (err) {
+        console.error('Failed to fetch forms:', err);
+      }
+    };
+    
+    if (initialOrder) {
+      fetchForms();
+    }
+  }, [date, initialOrder]);
 
   // Validate inventory when selected products change
   useEffect(() => {
@@ -206,7 +238,9 @@ function Form({
             });
             var availableInventory = (currentProduct.inventory || 0)-products_ordered_before[productName];
             if (initialOrder && onUpdate) {
-              availableInventory += (initialOrder && initialOrder.selectedProducts[productName]) ? Object.values(initialOrder.selectedProducts[productName].extras).reduce((acc, amount) => acc + amount, 0) : 0; //add the amount in the initial order
+              var add_amount = (initialOrder && initialOrder.selectedProducts[productName]) ? 
+                Object.values(initialOrder.selectedProducts[productName].extras).reduce((acc, amount) => acc + amount, 0) : 0;
+              availableInventory += add_amount;
             }
             if (orderedAmount > availableInventory) {
                 newInventoryErrors[productName] = `We only have ${availableInventory} left`;
@@ -268,7 +302,6 @@ function Form({
         if (onUpdate) onUpdate(orderData);
       } else {
         // Submit new order to backend
-        console.log(orderData.selectedProducts)
         await submitOrder(orderData);
         
         // Reset form on success
@@ -308,21 +341,48 @@ function Form({
     if (!initialOrder || !onDelete) return;
     
     const confirmDelete = window.confirm('Are you sure you want to delete this order? This action cannot be undone.');
-    console.log("here 1");
     if (!confirmDelete) return;
-    console.log("here 2");
     
     try {
       setIsSubmitting(true);
-      console.log("here 3");
       await deleteOrder(initialOrder.id);
-      console.log("here 4");
       if (onDelete) onDelete();
     } catch (err) {
-      console.log("error Form.tsx");
       setSubmitError('Failed to delete order');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Handle moving an order to another form
+  const handleMoveOrder = async () => {
+    if (!initialOrder || !targetForm) return;
+    
+    try {
+      setMoveLoading(true);
+      setMoveError(null);
+      
+      const response = await moveOrder(initialOrder.id, targetForm);
+      
+      if (response.success) {
+        // Show success message
+        setSubmitSuccess(true);
+        setMoveError(null);
+        
+        // Close move dialog
+        setShowMoveDialog(false);
+        
+        // If we have an onUpdate callback, use it
+        if (onUpdate) {
+          onUpdate({ ...initialOrder, date: targetForm });
+        }
+      } else {
+        setMoveError(response.error || 'Failed to move order');
+      }
+    } catch (error) {
+      setMoveError('Failed to move order. Please try again.');
+    } finally {
+      setMoveLoading(false);
     }
   };
 
@@ -359,6 +419,92 @@ function Form({
         {initialOrder ? 'Edit Order' : 'Order Form'} for {date}
       </h1>
       
+      {/* Move Order Dialog */}
+      {showMoveDialog && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '24px',
+            borderRadius: '8px',
+            width: '400px',
+            maxWidth: '90%'
+          }}>
+            <h3 style={{ marginTop: 0, marginBottom: '16px' }}>Move Order to Another Form</h3>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                Select Target Form:
+              </label>
+              <select
+                value={targetForm}
+                onChange={(e) => setTargetForm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  marginBottom: '20px'
+                }}
+                disabled={moveLoading}
+              >
+                <option value="">Select a form</option>
+                {availableForms.map(form => (
+                  <option key={form} value={form}>{form}</option>
+                ))}
+              </select>
+              
+              {moveError && (
+                <div style={{ color: 'red', marginBottom: '10px' }}>
+                  {moveError}
+                </div>
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+              <button
+                onClick={() => setShowMoveDialog(false)}
+                disabled={moveLoading}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  backgroundColor: '#f9fafb',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMoveOrder}
+                disabled={moveLoading || !targetForm}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  backgroundColor: '#3B82F6',
+                  color: 'white',
+                  cursor: 'pointer',
+                  opacity: (moveLoading || !targetForm) ? 0.7 : 1
+                }}
+              >
+                {moveLoading ? 'Moving...' : 'Move Order'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {submitSuccess ? (
         <div style={{
           padding: '20px',
@@ -370,12 +516,14 @@ function Form({
         }}>
           <h3>
             {initialOrder 
-              ? 'Order updated successfully!' 
+              ? (showMoveDialog ? 'Order moved successfully!' : 'Order updated successfully!') 
               : 'Your order has been submitted successfully!'}
           </h3>
           <p>
             {initialOrder 
-              ? 'The order has been updated with your changes.'
+              ? (showMoveDialog 
+                  ? `Order has been moved to ${targetForm}` 
+                  : 'The order has been updated with your changes.')
               : 'Thank you for your order. You will receive a confirmation message on your phone.'}
           </p>
           
@@ -541,25 +689,47 @@ function Form({
               flexWrap: 'wrap'
             }}>
               {initialOrder && (
-                <button 
-                  onClick={handleDelete}
-                  disabled={isSubmitting || externalLoading}
-                  style={{
-                    backgroundColor: '#f44336',
-                    color: 'white',
-                    padding: '12px 24px',
-                    fontSize: '16px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: (isSubmitting || externalLoading) ? 'not-allowed' : 'pointer',
-                    fontWeight: 'bold',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                    opacity: (isSubmitting || externalLoading) ? 0.7 : 1,
-                    minWidth: '180px'
-                  }}
-                >
-                  Delete Order
-                </button>
+                <>
+                  <button 
+                    onClick={handleDelete}
+                    disabled={isSubmitting || externalLoading}
+                    style={{
+                      backgroundColor: '#f44336',
+                      color: 'white',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: (isSubmitting || externalLoading) ? 'not-allowed' : 'pointer',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                      opacity: (isSubmitting || externalLoading) ? 0.7 : 1,
+                      minWidth: '180px'
+                    }}
+                  >
+                    Delete Order
+                  </button>
+                  
+                  <button 
+                    onClick={() => setShowMoveDialog(true)}
+                    disabled={isSubmitting || externalLoading}
+                    style={{
+                      backgroundColor: '#3B82F6',
+                      color: 'white',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: (isSubmitting || externalLoading) ? 'not-allowed' : 'pointer',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                      opacity: (isSubmitting || externalLoading) ? 0.7 : 1,
+                      minWidth: '180px'
+                    }}
+                  >
+                    Move to Another Form
+                  </button>
+                </>
               )}
               
               <button 

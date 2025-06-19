@@ -702,6 +702,103 @@ def get_products_ordered():
         "dict": result
     })
 
+@app.route('/api/orders/<order_id>/move', methods=['POST'])
+def move_order(order_id):
+    data = request.json
+    if 'target_form' not in data:
+        return jsonify({"success": False, "error": "target_form parameter is required"}), 400
+    
+    target_form = data['target_form']
+    orders_data = read_orders()
+    
+    # Find the original order
+    form_name, idx, order = find_order(order_id)
+    if not order:
+        return jsonify({"success": False, "error": "Order not found"}), 404
+    
+    # Check if target form exists
+    if target_form not in orders_data:
+        return jsonify({"success": False, "error": "Target form not found"}), 404
+    
+    # Get target form's products
+    forms_data = read_forms()
+    if target_form not in forms_data:
+        return jsonify({"success": False, "error": "Target form products not found"}), 404
+    
+    # Validate products exist in target form
+    target_products = forms_data[target_form]["products"]
+    target_product_names = [p["name"] for p in target_products]
+    
+    for product_name in order["selectedProducts"].keys():
+        if product_name not in target_product_names:
+            return jsonify({
+                "success": False,
+                "error": f"Product '{product_name}' not available in target form"
+            }), 400
+    
+    # Validate inventory in target form
+    try:
+        # Get products ordered in target form
+        target_orders = orders_data[target_form]["orders"]
+        target_products_ordered = {}
+        for o in target_orders:
+            for p_name, p_data in o["selectedProducts"].items():
+                if p_name not in target_products_ordered:
+                    target_products_ordered[p_name] = 0
+                for extra, amount in p_data["extras"].items():
+                    target_products_ordered[p_name] += amount
+        
+        # Check against target form inventory
+        for p_name, p_data in order["selectedProducts"].items():
+            # Find product in target form
+            target_product = next((p for p in target_products if p["name"] == p_name), None)
+            if not target_product:
+                continue
+            
+            # Calculate total ordered amount
+            ordered_amount = sum(p_data["extras"].values())
+            
+            # Get available inventory
+            available = target_product["inventory"]
+            already_ordered = target_products_ordered.get(p_name, 0)
+            remaining = available - already_ordered
+            
+            if ordered_amount > remaining:
+                return jsonify({
+                    "success": False,
+                    "error": f"Not enough inventory for '{p_name}' in target form (only {remaining} available)"
+                }), 400
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": f"Inventory validation failed: {str(e)}"
+        }), 500
+    
+    # Create a copy of the order for the target form
+    new_order = copy.deepcopy(order)
+    new_order["date"] = target_form
+    new_order["timestamp"] = datetime.now().isoformat()
+    
+    # Add to target form
+    orders_data[target_form]["orders"].append(new_order)
+    
+    # Update aggregates for target form
+    recalc_aggregates(orders_data, target_form)
+    
+    # Remove from original form
+    del orders_data[form_name]["orders"][idx]
+    
+    # Update aggregates for original form
+    recalc_aggregates(orders_data, form_name)
+    
+    # Save changes
+    write_orders(orders_data)
+    
+    return jsonify({
+        "success": True,
+        "message": "Order moved successfully",
+        "new_form": target_form
+    })
 
 
 if __name__ == '__main__':
