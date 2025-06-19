@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Product from './Product';
-import { submitOrder, updateOrder, deleteOrder, getProducts } from '../services/api';
+import { submitOrder, updateOrder, deleteOrder, getProducts, getProductsOrdered } from '../services/api';
 
 interface Extra {
   name: string;
@@ -187,6 +187,8 @@ function Form({
     try {
       // Fetch current product data to get latest inventory
       const { products: currentProducts } = await getProducts(date);
+      const products_ordered_before = await getProductsOrdered(date);
+
       const newInventoryErrors: {[key: string]: string} = {};
 
       // Check inventory for each selected product
@@ -202,7 +204,7 @@ function Form({
             currentProduct.extras.forEach((extra: any) => {
                 orderedAmount = orderedAmount + (productSelection.extras[extra.name] || 0);
             });
-            const availableInventory = currentProduct.inventory || 0;
+            const availableInventory = (currentProduct.inventory || 0)-products_ordered_before[productName];
             if (orderedAmount > availableInventory) {
                 newInventoryErrors[productName] = `We only have ${availableInventory} left`;
             }

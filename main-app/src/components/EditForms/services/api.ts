@@ -181,8 +181,7 @@ export const updateFormProducts = async (formName: string, products: ProductData
     const processedProducts = products.map(product => ({
       ...product,
       inventory: product.inventory ?? 12,
-      // Set soldOut to true if inventory is 0
-      soldOut: (product.inventory ?? 12) === 0
+      soldOut: false
     }));
 
     const response = await fetch(`${API_URL}/forms/${encodeURIComponent(formName)}`, {
@@ -213,7 +212,7 @@ export const addProduct = async (formName: string, product: ProductData) => {
     const productWithInventory = {
       ...product,
       inventory: product.inventory ?? 12,
-      soldOut: (product.inventory ?? 12) === 0
+      soldOut: false
     };
     
     // First get existing products

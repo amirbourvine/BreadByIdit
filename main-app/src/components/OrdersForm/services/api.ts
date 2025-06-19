@@ -202,37 +202,6 @@ export const getOrders = async (dateFilter?: string) => {
   }
 };
 
-
-export const updateInventory = async (date: string, inventoryUpdates: {
-    name: string;
-    inventory: number;
-  }[]) => {
-    try {
-      const response = await fetch(`${API_URL}/update_inventory`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          date, 
-          inventoryUpdates 
-        }),
-      });
-      
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to update inventory');
-      }
-      
-      return data;
-    } catch (error) {
-      console.error('Error updating inventory:', error);
-      throw error;
-    }
-  };
-
-
 // Get single order
 export const getOrder = async (orderId: string) => {
   const response = await fetch(`/api/orders/${orderId}`);
@@ -258,4 +227,26 @@ export const deleteOrder = async (orderId: string) => {
   });
   if (!response.ok) throw new Error('Failed to delete order');
   return response.json();
+};
+
+
+export const getProductsOrdered = async (formName: string): Promise<{ [key: string]: number }> => {
+  try {
+    const response = await fetch(`${API_URL}/orders/products_ordered?form_name=${encodeURIComponent(formName)}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch products ordered for ${formName}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.success && data.dict) {
+      return data.dict;
+    } else {
+      throw new Error('Invalid response format from server');
+    }
+  } catch (error) {
+    console.error(`Error fetching products ordered for ${formName}:`, error);
+    throw error;
+  }
 };

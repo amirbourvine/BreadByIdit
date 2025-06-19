@@ -451,6 +451,7 @@ def update_form(form_name):
         }), 400
     
     forms_data = read_forms()
+
     
     # Check if form exists
     if form_name not in forms_data:
@@ -471,6 +472,8 @@ def update_form(form_name):
         if not comment:
             comment = forms_data[form_name]["comment"]
     
+    products_data = read_orders()[form_name]["products"]
+
     # Process products to ensure inventory and soldOut are set correctly
     # IMPORTANT: Maintain the exact order that was sent from the frontend
     processed_products = []
@@ -479,7 +482,7 @@ def update_form(form_name):
         inventory = product.get('inventory', 12)
         
         # Ensure soldOut is set based on inventory
-        soldOut = inventory == 0
+        soldOut = (inventory == (products_data[product["name"]])["total_amount"])
         
         processed_product = {
             **product,
@@ -509,7 +512,7 @@ def update_form(form_name):
 def get_products(date):
     """Get products for a specific date"""
     forms_data = read_forms()
-    
+    products_data = read_orders()[date]["products"]
     if date in forms_data:
         # Check if the data structure has been updated
         if isinstance(forms_data[date], dict) and "products" in forms_data[date]:
@@ -519,7 +522,7 @@ def get_products(date):
                 if 'inventory' not in product:
                     product['inventory'] = 12
                 # Update soldOut based on inventory
-                product['soldOut'] = product.get('inventory', 0) == 0
+                product['soldOut'] = (product.get('inventory', 0) == (products_data[product["name"]])["total_amount"])
             
             # Return products, metadata, and comment if available
             return jsonify({
@@ -541,53 +544,6 @@ def get_products(date):
             "success": False,
             "error": "Date not found"
         }), 404
-
-# Add a new route to update inventory
-@app.route('/api/update_inventory', methods=['PUT'])
-def update_inventory():
-    """Update inventory for a specific date and products"""
-    data = request.json
-    
-    if 'date' not in data or 'inventoryUpdates' not in data:
-        return jsonify({
-            "success": False,
-            "error": "Date and inventory updates are required"
-        }), 400
-    
-    date = data['date']
-    inventory_updates = data['inventoryUpdates']
-    
-    forms_data = read_forms()
-    
-    if date not in forms_data:
-        return jsonify({
-            "success": False,
-            "error": "Date not found"
-        }), 404
-    
-    # Ensure the form has the new structure
-    if not isinstance(forms_data[date], dict) or "products" not in forms_data[date]:
-        return jsonify({
-            "success": False,
-            "error": "Invalid form structure"
-        }), 400
-    
-    # Update inventories
-    products = forms_data[date]["products"]
-    for update in inventory_updates:
-        product = next((p for p in products if p['name'] == update['name']), None)
-        if product:
-            product['inventory'] = update['inventory']
-            # Update soldOut status
-            product['soldOut'] = product['inventory'] == 0
-    
-    # Write updated forms data
-    write_forms(forms_data)
-    
-    return jsonify({
-        "success": True,
-        "message": "Inventory updated successfully"
-    })
 
 
 @app.route('/api/udpate_sourdough', methods=['PUT'])
@@ -704,6 +660,47 @@ def recalc_aggregates(orders_data, form_name):
                 products_agg[product_name]["extras"][extra_name]["names"].append(order["name"])
             products_agg[product_name]["total_amount"] += amount
     orders_data[form_name]["products"] = products_agg
+
+
+@app.route('/api/orders/products_ordered', methods=['GET'])
+def get_products_ordered():
+    # Get form_name from query parameters
+    form_name = request.args.get('form_name')
+    
+    # Validate form_name parameter
+    if not form_name:
+        return jsonify({
+            "success": False,
+            "error": "form_name parameter is required"
+        }), 400
+    
+    # Read orders data
+    orders_data = read_orders()
+    
+    # Check if form exists
+    if form_name not in orders_data:
+        return jsonify({
+            "success": False,
+            "error": f"Form '{form_name}' not found"
+        }), 404
+    
+    # Get products data for the form
+    form_data = orders_data[form_name]
+    
+    # Initialize result dictionary
+    result = {}
+    
+    # Extract total amounts for each product
+    if "products" in form_data:
+        for product_name, product_data in form_data["products"].items():
+            result[product_name] = product_data.get("total_amount", 0)
+    
+    return jsonify({
+        "success": True,
+        "dict": result
+    })
+
+
 
 if __name__ == '__main__':
     app.run(port=5000, host="0.0.0.0")
