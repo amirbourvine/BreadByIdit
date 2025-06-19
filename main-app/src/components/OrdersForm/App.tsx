@@ -32,17 +32,38 @@ function App() {
   const [panelOpen, setPanelOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  // Add body class when panel is open on mobile
+  useEffect(() => {
+    if (isMobile && panelOpen) {
+      document.body.classList.add('panel-open');
+    } else {
+      document.body.classList.remove('panel-open');
+    }
+    
+    return () => {
+      document.body.classList.remove('panel-open');
+    };
+  }, [isMobile, panelOpen]);
+
   // Detect mobile screens
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      // Auto-close panel on mobile when navigating
-      if (window.innerWidth < 768) setPanelOpen(false);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      
+      // Auto-close panel on mobile when resizing to mobile
+      if (mobile) {
+        setPanelOpen(false);
+      }
+      // Auto-open panel when resizing to desktop if it was previously open
+      else if (!mobile && !panelOpen) {
+        setPanelOpen(true);
+      }
     };
     
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [panelOpen]);
 
   // Fetch available dates
   useEffect(() => {
@@ -140,11 +161,12 @@ function App() {
       
       {/* Main content area */}
       <div style={{ 
-        marginLeft: panelOpen && !isMobile ? 'min(256px, 25vw)' : 0,
+        marginLeft: !isMobile && panelOpen ? 'min(256px, 25vw)' : 0,
         flex: '1',
         width: '100%',
         overflow: 'auto',
-        position: 'relative'
+        position: 'relative',
+        transition: 'margin-left 0.3s ease'
       }}>
         {/* Toggle button for mobile */}
         {isMobile && (
