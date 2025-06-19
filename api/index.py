@@ -513,6 +513,10 @@ def get_products(date):
     """Get products for a specific date"""
     forms_data = read_forms()
     products_data = read_orders()[date]["products"]
+
+    print("products_data:")
+    print(products_data)
+
     if date in forms_data:
         # Check if the data structure has been updated
         if isinstance(forms_data[date], dict) and "products" in forms_data[date]:
