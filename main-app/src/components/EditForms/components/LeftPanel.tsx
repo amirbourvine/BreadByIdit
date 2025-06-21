@@ -235,13 +235,7 @@ function LeftPanel({
       {/* View Orders Section */}
       <div style={{ marginTop: '16px' }}>
         <div 
-          style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            gap: '8px', 
-            marginBottom: '16px',
-            width: '100%'
-          }}
+          style={dropdownHeaderStyle} 
           onClick={() => toggleSection('viewOrders')}
         >
           View Orders
