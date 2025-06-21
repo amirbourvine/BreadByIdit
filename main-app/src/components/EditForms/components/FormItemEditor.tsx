@@ -95,102 +95,144 @@ function FormItemEditor({
       style={{ 
         border: isSelected ? '2px solid #4CAF50' : '1px solid #ddd',
         borderRadius: '8px',
-        padding: '16px',
+        padding: '12px',
         marginBottom: '16px',
         transition: 'all 0.3s ease',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        maxWidth: '100%',
+        overflow: 'hidden'
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-        <div style={{ marginRight: '16px' }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+        gap: '12px'
+      }}>
+        {/* Mobile: Checkbox and inventory row */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '8px',
+          order: window.innerWidth <= 768 ? 1 : 0
+        }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <input
               type="checkbox"
               checked={isSelected}
               onChange={(e) => onSelect(e.target.checked)}
               style={{ 
-                width: '20px', 
-                height: '20px', 
+                width: '18px', 
+                height: '18px', 
                 cursor: 'pointer',
-                marginTop: '5px' 
+                marginRight: '6px'
               }}
             />
-            <span style={{ fontSize: '14px', marginLeft: '4px' }}>Existent</span>
-          </div>
-        </div>
-        
-        <div style={{ marginRight: '16px' }}>
-          {!imageError && (
-            <img 
-              src={getImageSrc()}
-              alt={product.name}
-              style={{ 
-                width: '100px', 
-                height: '100px', 
-                objectFit: 'cover',
-                borderRadius: '4px',
-                filter: !isSelected || product.soldOut ? 'grayscale(100%)' : 'none'
-              }}
-              onError={() => setImageError(true)}
-            />
-          )}
-        </div>
-        
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <h3 style={{ margin: '0', fontWeight: 'bold' }}>{product.name}</h3>
-            
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <span style={{ fontSize: '14px', marginRight: '8px' }}>Inventory:</span>
-              <input
-                type="number"
-                min="0"
-                value={product.inventory ?? 12}
-                onChange={(e) => handleInventoryChange(parseInt(e.target.value) || 0)}
-                style={{ 
-                  width: '60px', 
-                  padding: '4px',
-                  borderRadius: '4px',
-                  border: '1px solid #ddd'
-                }}
-              />
-            </div>
+            <span style={{ fontSize: '14px' }}>Existent</span>
           </div>
           
-          <div style={{ marginBottom: '8px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>
-              Description:
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '14px', whiteSpace: 'nowrap' }}>Inventory:</span>
+            <input
+              type="number"
+              min="0"
+              value={product.inventory ?? 12}
+              onChange={(e) => handleInventoryChange(parseInt(e.target.value) || 0)}
+              style={{ 
+                width: '60px', 
+                padding: '4px',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                fontSize: '14px'
+              }}
+            />
+          </div>
+        </div>
+        
+        {/* Image and content container */}
+        <div style={{
+          display: 'flex',
+          flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+          gap: '12px',
+          flex: 1,
+          order: window.innerWidth <= 768 ? 2 : 0
+        }}>
+          {/* Image */}
+          {!imageError && (
+            <div style={{ 
+              flexShrink: 0,
+              alignSelf: window.innerWidth <= 768 ? 'center' : 'flex-start'
+            }}>
+              <img 
+                src={getImageSrc()}
+                alt={product.name}
+                style={{ 
+                  width: window.innerWidth <= 768 ? '80px' : '100px', 
+                  height: window.innerWidth <= 768 ? '80px' : '100px', 
+                  objectFit: 'cover',
+                  borderRadius: '4px',
+                  filter: !isSelected || product.soldOut ? 'grayscale(100%)' : 'none'
+                }}
+                onError={() => setImageError(true)}
+              />
+            </div>
+          )}
+          
+          {/* Content */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ marginBottom: '12px' }}>
+              <h3 style={{ 
+                margin: '0 0 8px 0', 
+                fontWeight: 'bold',
+                fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+                textAlign: window.innerWidth <= 768 ? 'center' : 'left'
+              }}>
+                {product.name}
+              </h3>
+            </div>
+            
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>
+                Description:
+              </label>
               <textarea
                 value={product.description}
                 onChange={(e) => handleDescriptionChange(e.target.value)}
                 style={{ 
                   width: '100%', 
                   padding: '8px',
-                  marginTop: '5px',
                   borderRadius: '4px',
-                  border: '1px solid #ddd'
+                  border: '1px solid #ddd',
+                  fontSize: '14px',
+                  resize: 'vertical',
+                  minHeight: '60px',
+                  boxSizing: 'border-box'
                 }}
                 rows={2}
               />
-            </label>
+            </div>
+            
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              style={{
+                backgroundColor: '#f0f0f0',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                padding: '8px 12px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontSize: '14px',
+                width: window.innerWidth <= 768 ? '100%' : 'auto',
+                justifyContent: window.innerWidth <= 768 ? 'center' : 'flex-start'
+              }}
+            >
+              <span>{isExpanded ? 'Hide Extras' : 'Edit Extras'}</span>
+              <span>{isExpanded ? '▲' : '▼'}</span>
+            </button>
           </div>
-          
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            style={{
-              backgroundColor: '#f0f0f0',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              padding: '8px 12px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px'
-            }}
-          >
-            <span>{isExpanded ? 'Hide Extras' : 'Edit Extras'}</span>
-            <span>{isExpanded ? '▲' : '▼'}</span>
-          </button>
         </div>
       </div>
       
@@ -198,13 +240,21 @@ function FormItemEditor({
         <div 
           style={{ 
             marginTop: '16px',
-            padding: '16px',
+            padding: '12px',
             backgroundColor: '#f9f9f9',
-            borderRadius: '4px'
+            borderRadius: '4px',
+            overflow: 'hidden'
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h4 style={{ marginTop: 0, marginBottom: 0 }}>Extras</h4>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginBottom: '16px',
+            flexWrap: 'wrap',
+            gap: '8px'
+          }}>
+            <h4 style={{ margin: 0, fontSize: '16px' }}>Extras</h4>
             <button
               onClick={handleAddExtra}
               style={{
@@ -212,86 +262,240 @@ function FormItemEditor({
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',
-                padding: '5px 10px',
-                cursor: 'pointer'
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '14px'
               }}
             >
               + Add Extra
             </button>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr auto', gap: '8px', fontWeight: 'bold', marginBottom: '8px' }}>
-            <div>Name</div>
-            <div>Min Amount</div>
-            <div>Max Amount</div>
-            <div>Price (ILS)</div>
-            <div></div>
-          </div>
-          
-          {product.extras.map((extra, index) => (
-            <div 
-              key={index} 
-              style={{ 
-                display: 'grid', 
-                gridTemplateColumns: '1fr 1fr 1fr 1fr auto', 
-                gap: '8px',
-                padding: '8px 0',
-                borderBottom: index < product.extras.length - 1 ? '1px solid #eee' : 'none'
-              }}
-            >
-              <div>
-                <input
-                  type="text"
-                  value={extra.name}
-                  onChange={(e) => handleExtraChange(index, { ...extra, name: e.target.value })}
-                  style={{ width: '100%', padding: '4px', borderRadius: '4px', border: '1px solid #ddd' }}
-                />
-              </div>
-              <div>
-                <input
-                  type="number"
-                  min="0"
-                  value={extra.minAmount}
-                  onChange={(e) => handleExtraChange(index, { ...extra, minAmount: parseInt(e.target.value) || 0 })}
-                  style={{ width: '100%', padding: '4px', borderRadius: '4px', border: '1px solid #ddd' }}
-                />
-              </div>
-              <div>
-                <input
-                  type="number"
-                  min={extra.minAmount}
-                  value={extra.maxAmount}
-                  onChange={(e) => handleExtraChange(index, { ...extra, maxAmount: parseInt(e.target.value) || 1 })}
-                  style={{ width: '100%', padding: '4px', borderRadius: '4px', border: '1px solid #ddd' }}
-                />
-              </div>
-              <div>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={extra.price}
-                  onChange={(e) => handleExtraChange(index, { ...extra, price: parseFloat(e.target.value) || 0 })}
-                  style={{ width: '100%', padding: '4px', borderRadius: '4px', border: '1px solid #ddd' }}
-                />
-              </div>
-              <div>
-                <button
-                  onClick={() => handleRemoveExtra(index)}
-                  style={{
-                    backgroundColor: '#F87171',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '5px 10px',
-                    cursor: 'pointer'
+          {/* Mobile: Stack extras vertically */}
+          {window.innerWidth <= 768 ? (
+            <div>
+              {product.extras.map((extra, index) => (
+                <div 
+                  key={index} 
+                  style={{ 
+                    padding: '12px',
+                    marginBottom: '12px',
+                    backgroundColor: 'white',
+                    borderRadius: '6px',
+                    border: '1px solid #eee'
                   }}
                 >
-                  ×
-                </button>
-              </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '14px' }}>Extra {index + 1}</span>
+                    <button
+                      onClick={() => handleRemoveExtra(index)}
+                      style={{
+                        backgroundColor: '#F87171',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        padding: '4px 8px',
+                        cursor: 'pointer',
+                        fontSize: '12px'
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', marginBottom: '4px', fontWeight: 'bold' }}>Name:</label>
+                      <input
+                        type="text"
+                        value={extra.name}
+                        onChange={(e) => handleExtraChange(index, { ...extra, name: e.target.value })}
+                        style={{ 
+                          width: '100%', 
+                          padding: '6px', 
+                          borderRadius: '4px', 
+                          border: '1px solid #ddd',
+                          fontSize: '14px',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '12px', marginBottom: '4px', fontWeight: 'bold' }}>Min:</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={extra.minAmount}
+                          onChange={(e) => handleExtraChange(index, { ...extra, minAmount: parseInt(e.target.value) || 0 })}
+                          style={{ 
+                            width: '100%', 
+                            padding: '6px', 
+                            borderRadius: '4px', 
+                            border: '1px solid #ddd',
+                            fontSize: '14px',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+                      
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '12px', marginBottom: '4px', fontWeight: 'bold' }}>Max:</label>
+                        <input
+                          type="number"
+                          min={extra.minAmount}
+                          value={extra.maxAmount}
+                          onChange={(e) => handleExtraChange(index, { ...extra, maxAmount: parseInt(e.target.value) || 1 })}
+                          style={{ 
+                            width: '100%', 
+                            padding: '6px', 
+                            borderRadius: '4px', 
+                            border: '1px solid #ddd',
+                            fontSize: '14px',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+                      
+                      <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', fontSize: '12px', marginBottom: '4px', fontWeight: 'bold' }}>Price (₪):</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={extra.price}
+                          onChange={(e) => handleExtraChange(index, { ...extra, price: parseFloat(e.target.value) || 0 })}
+                          style={{ 
+                            width: '100%', 
+                            padding: '6px', 
+                            borderRadius: '4px', 
+                            border: '1px solid #ddd',
+                            fontSize: '14px',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            // Desktop: Grid layout
+            <div>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '2fr 1fr 1fr 1fr auto', 
+                gap: '8px', 
+                fontWeight: 'bold', 
+                marginBottom: '8px',
+                fontSize: '14px',
+                padding: '0 4px'
+              }}>
+                <div>Name</div>
+                <div>Min Amount</div>
+                <div>Max Amount</div>
+                <div>Price (₪)</div>
+                <div></div>
+              </div>
+              
+              {product.extras.map((extra, index) => (
+                <div 
+                  key={index} 
+                  style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: '2fr 1fr 1fr 1fr auto', 
+                    gap: '8px',
+                    padding: '8px 4px',
+                    borderBottom: index < product.extras.length - 1 ? '1px solid #eee' : 'none',
+                    alignItems: 'center'
+                  }}
+                >
+                  <div>
+                    <input
+                      type="text"
+                      value={extra.name}
+                      onChange={(e) => handleExtraChange(index, { ...extra, name: e.target.value })}
+                      style={{ 
+                        width: '100%', 
+                        padding: '6px', 
+                        borderRadius: '4px', 
+                        border: '1px solid #ddd',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      min="0"
+                      value={extra.minAmount}
+                      onChange={(e) => handleExtraChange(index, { ...extra, minAmount: parseInt(e.target.value) || 0 })}
+                      style={{ 
+                        width: '100%', 
+                        padding: '6px', 
+                        borderRadius: '4px', 
+                        border: '1px solid #ddd',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      min={extra.minAmount}
+                      value={extra.maxAmount}
+                      onChange={(e) => handleExtraChange(index, { ...extra, maxAmount: parseInt(e.target.value) || 1 })}
+                      style={{ 
+                        width: '100%', 
+                        padding: '6px', 
+                        borderRadius: '4px', 
+                        border: '1px solid #ddd',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={extra.price}
+                      onChange={(e) => handleExtraChange(index, { ...extra, price: parseFloat(e.target.value) || 0 })}
+                      style={{ 
+                        width: '100%', 
+                        padding: '6px', 
+                        borderRadius: '4px', 
+                        border: '1px solid #ddd',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => handleRemoveExtra(index)}
+                      style={{
+                        backgroundColor: '#F87171',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        padding: '5px 10px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
