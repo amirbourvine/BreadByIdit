@@ -42,15 +42,22 @@
 }
 
 
-/* Ensure proper centering of content */
 .orders-container {
   display: flex;
   justify-content: center;
-  margin-left: min(256px, 25vw);
-  width: calc(100% - min(256px, 25vw));
+  margin-left: var(--left-panel-width, min(256px, 25vw));
+  width: calc(100% - var(--left-panel-width, min(256px, 25vw)));
   height: 100vh;
   overflow: auto;
   padding: 1rem;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .orders-container {
+    margin-left: var(--left-panel-width, 60px);
+    width: calc(100% - var(--left-panel-width, 60px));
+  }
 }
 
 /* Ensure box-sizing for all elements */

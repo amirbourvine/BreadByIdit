@@ -13,6 +13,8 @@ interface LeftPanelProps {
   onViewProducts: (form: string) => void; 
   onViewClients: (form: string) => void;
   onEditSourdough: () => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
 function LeftPanel({ 
@@ -26,7 +28,9 @@ function LeftPanel({
   onDeleteProduct,
   onViewProducts,
   onViewClients,
-  onEditSourdough
+  onEditSourdough,
+  isCollapsed,
+  onToggleCollapse
 }: LeftPanelProps) {
   const [visibility, setVisibility] = useState<{ [key: string]: boolean }>({});
   const [openSections, setOpenSections] = useState({
@@ -84,16 +88,42 @@ function LeftPanel({
       left: 0,
       top: 0,
       height: '100vh', 
-      width: 'min(256px, 25vw)',
+      width: isCollapsed ? '60px' : 'min(256px, 25vw)',
       backgroundColor: '#1f2937', 
       color: 'white', 
-      padding: '16px',
+      padding: isCollapsed ? '8px' : '16px',
       display: 'flex',
       flexDirection: 'column',
       boxShadow: '4px 0 6px -1px rgba(0, 0, 0, 0.1)',
       zIndex: 10,
-      overflow: 'auto'
+      overflow: 'auto',
+      transition: 'width 0.3s ease'
     }}>
+      <button
+        onClick={onToggleCollapse}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          right: isCollapsed ? '8px' : '16px',
+          width: '32px',
+          height: '32px',
+          backgroundColor: '#374151',
+          border: 'none',
+          borderRadius: '4px',
+          color: 'white',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '18px',
+          zIndex: 11
+        }}
+      >
+        {isCollapsed ? '→' : '←'}
+      </button>
+
+      {!isCollapsed && (
+      <>
       <h2 style={{ fontSize: 'min(1.25rem, 4vw)', fontWeight: 'bold', marginBottom: '16px' }}>
         Form Manager
       </h2>
@@ -339,6 +369,7 @@ function LeftPanel({
           </div>
         )}
       </div>
+      </>)}
     </div>
   )
 }

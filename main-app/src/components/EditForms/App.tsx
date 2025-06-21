@@ -45,6 +45,11 @@ function App() {
   const [showOrdersProducts, setShowOrdersProducts] = useState<boolean>(false);
   const [selectedOrdersProductsForm, setSelectedOrdersProductsForm] = useState<string>("");
   const [showEditSourdough, setShowEditSourdough] = useState<boolean>(false);
+  const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState<boolean>(false);
+
+  const handleToggleLeftPanel = () => {
+    setIsLeftPanelCollapsed(!isLeftPanelCollapsed);
+  };
 
   // Password protection
   const handlePasswordSubmit = () => {
@@ -354,8 +359,9 @@ function App() {
       padding: 0,
       position: 'absolute',
       left: 0,
-      top: 0
-    }}>
+      top: 0,
+      '--left-panel-width': isLeftPanelCollapsed ? '60px' : 'min(256px, 25vw)'
+    } as React.CSSProperties}>
       <LeftPanel 
         forms={forms} 
         onSelectForm={handleSelectForm}
@@ -368,6 +374,8 @@ function App() {
         onViewClients={handleViewClients}
         onViewProducts={handleViewProducts}
         onEditSourdough={handleShowEditSourdough}
+        isCollapsed={isLeftPanelCollapsed}
+        onToggleCollapse={handleToggleLeftPanel}
       />
       <div className="orders-container">
         {loading ? (
