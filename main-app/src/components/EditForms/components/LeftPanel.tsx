@@ -15,6 +15,7 @@ interface LeftPanelProps {
   onEditSourdough: () => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  isMobile: boolean;
 }
 
 function LeftPanel({ 
@@ -30,7 +31,8 @@ function LeftPanel({
   onViewClients,
   onEditSourdough,
   isCollapsed,
-  onToggleCollapse
+  onToggleCollapse,
+  isMobile
 }: LeftPanelProps) {
   const [visibility, setVisibility] = useState<{ [key: string]: boolean }>({});
   const [openSections, setOpenSections] = useState({
@@ -88,10 +90,10 @@ function LeftPanel({
       left: 0,
       top: 0,
       height: '100vh', 
-      width: isCollapsed ? '60px' : 'min(256px, 25vw)',
+      width: isCollapsed ? '60px' : (isMobile ? '80vw' : 'min(256px, 25vw)'),
       backgroundColor: '#1f2937', 
       color: 'white', 
-      padding: isCollapsed ? '8px' : '16px',
+      padding: isCollapsed ? '8px' : (isMobile ? '12px' : '16px'),
       display: 'flex',
       flexDirection: 'column',
       boxShadow: '4px 0 6px -1px rgba(0, 0, 0, 0.1)',
@@ -143,13 +145,15 @@ function LeftPanel({
             <button 
               onClick={onCreateForm} 
               style={{ 
-                padding: '8px', 
+                width: '100%',
+                padding: isMobile ? '12px 8px' : '8px', 
                 backgroundColor: '#10B981', 
                 borderRadius: '4px', 
                 border: 'none', 
                 color: 'white', 
                 cursor: 'pointer', 
-                marginBottom: '8px' 
+                marginBottom: '8px',
+                fontSize: isMobile ? '14px' : '12px'
               }}
             >
               + Create New Form
@@ -211,13 +215,15 @@ function LeftPanel({
             <button 
               onClick={handleSaveChanges} 
               style={{ 
+                width: '100%',
                 marginTop: '16px', 
-                padding: '8px', 
+                padding: isMobile ? '12px 8px' : '8px', 
                 backgroundColor: '#3B82F6', 
                 borderRadius: '4px', 
                 border: 'none', 
                 color: 'white', 
-                cursor: 'pointer' 
+                cursor: 'pointer',
+                fontSize: isMobile ? '14px' : '12px'
               }}
             >
               Save Changes
@@ -229,17 +235,13 @@ function LeftPanel({
       {/* View Orders Section */}
       <div style={{ marginTop: '16px' }}>
         <div 
-          style={{
+          style={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
-            alignItems: 'center', 
-            padding: '8px', 
-            backgroundColor: '#374151', 
-            color: 'white', 
-            cursor: 'pointer',
-            borderRadius: '4px',
-            marginBottom: '8px'
-          }} 
+            gap: '8px', 
+            marginBottom: '16px',
+            width: '100%'
+          }}
           onClick={() => toggleSection('viewOrders')}
         >
           View Orders
@@ -277,12 +279,14 @@ function LeftPanel({
                       onClick={() => onViewProducts(form)}
                       style={{ 
                         flex: 1, 
-                        padding: '8px', 
+                        padding: isMobile ? '12px 4px' : '8px', 
                         backgroundColor: '#6366F1', 
                         borderRadius: '4px', 
                         border: 'none', 
                         color: 'white', 
-                        cursor: 'pointer' 
+                        cursor: 'pointer',
+                        fontSize: isMobile ? '12px' : '11px',
+                        minWidth: 0
                       }}
                     >
                       Products
@@ -291,12 +295,14 @@ function LeftPanel({
                       onClick={() => onViewClients(form)}
                       style={{ 
                         flex: 1, 
-                        padding: '8px', 
+                        padding: isMobile ? '12px 4px' : '8px', 
                         backgroundColor: '#EC4899', 
                         borderRadius: '4px', 
                         border: 'none', 
                         color: 'white', 
-                        cursor: 'pointer' 
+                        cursor: 'pointer',
+                        fontSize: isMobile ? '12px' : '11px',
+                        minWidth: 0
                       }}
                     >
                       Clients
@@ -325,13 +331,15 @@ function LeftPanel({
             <button 
               onClick={onAddNewProduct} 
               style={{ 
+                width: '100%',
                 marginBottom: '8px',
-                padding: '8px', 
+                padding: isMobile ? '12px 8px' : '8px', 
                 backgroundColor: '#8B5CF6', 
                 borderRadius: '4px', 
                 border: 'none', 
                 color: 'white', 
-                cursor: 'pointer' 
+                cursor: 'pointer',
+                fontSize: isMobile ? '14px' : '12px'
               }}
             >
               Add New Product
@@ -340,13 +348,15 @@ function LeftPanel({
             <button 
               onClick={onDeleteProduct} 
               style={{ 
+                width: '100%',
                 marginBottom: '8px',
-                padding: '8px', 
+                padding: isMobile ? '12px 8px' : '8px', 
                 backgroundColor: '#EF4444', 
                 borderRadius: '4px', 
                 border: 'none', 
                 color: 'white', 
-                cursor: 'pointer' 
+                cursor: 'pointer',
+                fontSize: isMobile ? '14px' : '12px'
               }}
             >
               Delete Product
@@ -356,12 +366,14 @@ function LeftPanel({
             <button 
               onClick={onEditSourdough} 
               style={{ 
-                padding: '8px', 
+                width: '100%',
+                padding: isMobile ? '12px 8px' : '8px', 
                 backgroundColor: '#D97706', 
                 borderRadius: '4px', 
                 border: 'none', 
                 color: 'white', 
-                cursor: 'pointer' 
+                cursor: 'pointer',
+                fontSize: isMobile ? '14px' : '12px'
               }}
             >
               Contents

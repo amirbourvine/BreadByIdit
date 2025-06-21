@@ -385,6 +385,7 @@ function App() {
         onEditSourdough={handleShowEditSourdough}
         isCollapsed={isLeftPanelCollapsed}
         onToggleCollapse={handleToggleLeftPanel}
+        isMobile={isMobile}
       />
       <div 
         className="orders-container"
