@@ -190,20 +190,20 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
     }
   };
   
+  // Check if mobile
+  const isMobile = window.innerWidth <= 768;
+  
   // Responsive styles
   const containerStyle: React.CSSProperties = {
     maxWidth: '800px',
     margin: '0 auto',
-    padding: '0 10px',
-    '@media (max-width: 768px)': {
-      padding: '0 5px'
-    }
+    padding: isMobile ? '0 5px' : '0 10px'
   };
 
   const titleStyle: React.CSSProperties = {
     textAlign: 'center',
     margin: '15px 0',
-    fontSize: window.innerWidth <= 768 ? '1.5rem' : '2rem',
+    fontSize: isMobile ? '1.5rem' : '2rem',
     wordBreak: 'break-word',
     lineHeight: '1.2'
   };
@@ -211,12 +211,12 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
   const sectionStyle: React.CSSProperties = {
     border: '1px solid #ddd',
     borderRadius: '4px',
-    padding: window.innerWidth <= 768 ? '10px' : '20px',
+    padding: isMobile ? '10px' : '20px',
     marginBottom: '15px'
   };
 
   const successBoxStyle: React.CSSProperties = {
-    padding: window.innerWidth <= 768 ? '15px' : '20px',
+    padding: isMobile ? '15px' : '20px',
     backgroundColor: '#dff0d8',
     borderRadius: '4px',
     color: '#3c763d',
@@ -234,26 +234,26 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
     backgroundColor: isDragOver ? '#f8fff8' : 'white',
     cursor: 'move',
     marginBottom: '10px',
-    padding: window.innerWidth <= 768 ? '10px 5px' : '15px 10px'
+    padding: isMobile ? '10px 5px' : '15px 10px'
   });
 
   const orderControlsStyle: React.CSSProperties = {
     display: 'flex',
-    flexDirection: window.innerWidth <= 768 ? 'row' : 'column',
-    gap: window.innerWidth <= 768 ? '5px' : '2px',
-    marginBottom: window.innerWidth <= 768 ? '10px' : '0',
+    flexDirection: isMobile ? 'row' : 'column',
+    gap: isMobile ? '5px' : '2px',
+    marginBottom: isMobile ? '10px' : '0',
     alignItems: 'center',
-    justifyContent: window.innerWidth <= 768 ? 'flex-start' : 'center'
+    justifyContent: isMobile ? 'flex-start' : 'center'
   };
 
   const orderButtonStyle = (disabled: boolean): React.CSSProperties => ({
-    width: window.innerWidth <= 768 ? '35px' : '30px',
-    height: window.innerWidth <= 768 ? '30px' : '25px',
+    width: isMobile ? '35px' : '30px',
+    height: isMobile ? '30px' : '25px',
     border: '1px solid #ccc',
     backgroundColor: disabled ? '#f5f5f5' : 'white',
     cursor: disabled ? 'not-allowed' : 'pointer',
     borderRadius: '3px',
-    fontSize: window.innerWidth <= 768 ? '14px' : '12px',
+    fontSize: isMobile ? '14px' : '12px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -261,12 +261,12 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
   });
 
   const orderNumberStyle: React.CSSProperties = {
-    width: window.innerWidth <= 768 ? '35px' : '30px',
-    height: window.innerWidth <= 768 ? '25px' : '20px',
+    width: isMobile ? '35px' : '30px',
+    height: isMobile ? '25px' : '20px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: window.innerWidth <= 768 ? '14px' : '12px',
+    fontSize: isMobile ? '14px' : '12px',
     fontWeight: 'bold',
     color: '#666',
     backgroundColor: '#f8f8f8',
@@ -275,31 +275,31 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
   };
 
   const dragHandleStyle: React.CSSProperties = {
-    position: window.innerWidth <= 768 ? 'static' : 'absolute',
-    right: window.innerWidth <= 768 ? 'auto' : '10px',
-    top: window.innerWidth <= 768 ? 'auto' : '50%',
-    transform: window.innerWidth <= 768 ? 'none' : 'translateY(-50%)',
+    position: isMobile ? 'static' : 'absolute',
+    right: isMobile ? 'auto' : '10px',
+    top: isMobile ? 'auto' : '50%',
+    transform: isMobile ? 'none' : 'translateY(-50%)',
     cursor: 'grab',
     padding: '5px',
     color: '#999',
     fontSize: '18px',
     userSelect: 'none',
-    marginLeft: window.innerWidth <= 768 ? 'auto' : '0'
+    marginLeft: isMobile ? 'auto' : '0'
   };
 
   const productContentStyle: React.CSSProperties = {
-    marginLeft: window.innerWidth <= 768 ? '0' : '10px',
-    marginRight: window.innerWidth <= 768 ? '0' : '40px'
+    marginLeft: isMobile ? '0' : '10px',
+    marginRight: isMobile ? '0' : '40px'
   };
 
   const textareaStyle: React.CSSProperties = {
     width: '100%',
-    minHeight: window.innerWidth <= 768 ? '80px' : '100px',
-    padding: window.innerWidth <= 768 ? '8px' : '10px',
+    minHeight: isMobile ? '80px' : '100px',
+    padding: isMobile ? '8px' : '10px',
     borderRadius: '4px',
     border: '1px solid #ccc',
     fontFamily: 'inherit',
-    fontSize: window.innerWidth <= 768 ? '16px' : '14px', // 16px prevents zoom on iOS
+    fontSize: isMobile ? '16px' : '14px', // 16px prevents zoom on iOS
     resize: 'vertical',
     boxSizing: 'border-box'
   };
@@ -307,16 +307,16 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
   const saveButtonStyle: React.CSSProperties = {
     backgroundColor: '#4CAF50',
     color: 'white',
-    padding: window.innerWidth <= 768 ? '12px 20px' : '12px 24px',
-    fontSize: window.innerWidth <= 768 ? '14px' : '16px',
+    padding: isMobile ? '12px 20px' : '12px 24px',
+    fontSize: isMobile ? '14px' : '16px',
     border: 'none',
     borderRadius: '4px',
     cursor: isSubmitting ? 'not-allowed' : 'pointer',
     fontWeight: 'bold',
     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
     opacity: isSubmitting ? 0.7 : 1,
-    width: window.innerWidth <= 768 ? '100%' : 'auto',
-    maxWidth: window.innerWidth <= 768 ? '300px' : 'none'
+    width: isMobile ? '100%' : 'auto',
+    maxWidth: isMobile ? '300px' : 'none'
   };
 
   return (
@@ -327,7 +327,7 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
       
       {submitSuccess ? (
         <div style={successBoxStyle}>
-          <h3 style={{ margin: '0 0 10px 0', fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.5rem' }}>
+          <h3 style={{ margin: '0 0 10px 0', fontSize: isMobile ? '1.2rem' : '1.5rem' }}>
             Form saved successfully!
           </h3>
           <p style={{ margin: '0 0 15px 0' }}>Your changes have been saved.</p>
@@ -336,11 +336,11 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
             style={{
               backgroundColor: '#5cb85c',
               color: 'white',
-              padding: window.innerWidth <= 768 ? '10px 16px' : '10px 20px',
+              padding: isMobile ? '10px 16px' : '10px 20px',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: window.innerWidth <= 768 ? '14px' : '16px'
+              fontSize: isMobile ? '14px' : '16px'
             }}
           >
             Continue Editing
@@ -383,7 +383,7 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
                     style={productItemStyle(isDragging, isDragOver)}
                   >
                     {/* Mobile layout: controls at top */}
-                    {window.innerWidth <= 768 && (
+                    {isMobile && (
                       <div style={{ 
                         display: 'flex', 
                         justifyContent: 'space-between', 
@@ -420,7 +420,7 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
                     )}
 
                     {/* Desktop layout: absolute positioned controls */}
-                    {window.innerWidth > 768 && (
+                    {!isMobile && (
                       <>
                         <div style={{
                           position: 'absolute',
@@ -473,11 +473,11 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
           
           {/* Form Comment Section */}
           <div style={sectionStyle}>
-            <h2 style={{ margin: '0 0 10px 0', fontSize: window.innerWidth <= 768 ? '1.3rem' : '1.5rem' }}>
+            <h2 style={{ margin: '0 0 10px 0', fontSize: isMobile ? '1.3rem' : '1.5rem' }}>
               Form Comment
             </h2>
             <p style={{ 
-              fontSize: window.innerWidth <= 768 ? '13px' : '14px', 
+              fontSize: isMobile ? '13px' : '14px', 
               color: '#666', 
               marginBottom: '10px',
               lineHeight: '1.4'
@@ -494,16 +494,16 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
           
           <div style={{ 
             textAlign: 'center', 
-            margin: window.innerWidth <= 768 ? '15px 0' : '20px 0'
+            margin: isMobile ? '15px 0' : '20px 0'
           }}>
             {submitError && (
               <div style={{ 
                 color: 'red', 
                 backgroundColor: '#f8d7da', 
-                padding: window.innerWidth <= 768 ? '8px' : '10px', 
+                padding: isMobile ? '8px' : '10px', 
                 borderRadius: '4px', 
                 marginBottom: '15px',
-                fontSize: window.innerWidth <= 768 ? '13px' : '14px'
+                fontSize: isMobile ? '13px' : '14px'
               }}>
                 {submitError}
               </div>
@@ -517,7 +517,7 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>
             
-            <div style={{ height: window.innerWidth <= 768 ? '40px' : '80px' }}></div>
+            <div style={{ height: isMobile ? '40px' : '80px' }}></div>
           </div>
         </>
       )}
