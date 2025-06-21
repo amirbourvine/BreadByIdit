@@ -275,22 +275,40 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ margin: 0 }}>Edit Contents</h2>
-        <button 
-          onClick={onClose}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#6B7280',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Close
-        </button>
+    <div style={{
+      padding: '16px',
+      maxWidth: '800px',
+      margin: '0 auto'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        gap: '12px',
+        marginBottom: '20px'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px'
+        }}>
+          <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Edit Contents</h2>
+          <button 
+            onClick={onClose}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#6B7280',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '0.875rem'
+            }}
+          >
+            Close
+          </button>
+        </div>
       </div>
 
       {loading && <p>Loading products...</p>}
@@ -301,7 +319,8 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
           backgroundColor: '#FEE2E2', 
           color: '#B91C1C', 
           borderRadius: '4px',
-          marginBottom: '16px'
+          marginBottom: '16px',
+          fontSize: '0.875rem'
         }}>
           {error}
         </div>
@@ -313,14 +332,20 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
           backgroundColor: '#D1FAE5', 
           color: '#065F46', 
           borderRadius: '4px',
-          marginBottom: '16px'
+          marginBottom: '16px',
+          fontSize: '0.875rem'
         }}>
           {successMessage}
         </div>
       )}
 
       {products.map(product => (
-        <div key={product.name} style={{ marginBottom: '16px', border: '1px solid #E5E7EB', borderRadius: '4px' }}>
+        <div key={product.name} style={{ 
+          marginBottom: '16px', 
+          border: '1px solid #E5E7EB', 
+          borderRadius: '4px',
+          overflow: 'hidden'
+        }}>
           <div 
             style={{ 
               padding: '12px',
@@ -332,16 +357,28 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
             }}
             onClick={() => toggleProduct(product.name)}
           >
-            <div style={{ fontWeight: '500' }}>{product.name}</div>
+            <div style={{ fontWeight: '500', fontSize: '0.95rem' }}>{product.name}</div>
             {product.minimized ? <ChevronRight size={20} /> : <ChevronDown size={20} />}
           </div>
           
           {!product.minimized && (
             <div style={{ padding: '16px', backgroundColor: 'white' }}>
-              {/* Base Ingredients */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+              {/* Base Ingredients - Responsive Grid */}
+              <div style={{ 
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                gap: '12px',
+                marginBottom: '24px'
+              }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.875rem' }}>Flour (g)</label>
+                  <label style={{ 
+                    display: 'block', 
+                    marginBottom: '4px', 
+                    fontSize: '0.875rem',
+                    fontWeight: '500'
+                  }}>
+                    Flour (g)
+                  </label>
                   <input
                     type="number"
                     value={product.flour}
@@ -350,12 +387,20 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
                       padding: '8px',
                       border: '1px solid #E5E7EB',
                       borderRadius: '4px',
-                      width: '100%'
+                      width: '100%',
+                      fontSize: '0.875rem'
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.875rem' }}>Water (g)</label>
+                  <label style={{ 
+                    display: 'block', 
+                    marginBottom: '4px', 
+                    fontSize: '0.875rem',
+                    fontWeight: '500'
+                  }}>
+                    Water (g)
+                  </label>
                   <input
                     type="number"
                     value={product.water}
@@ -364,12 +409,20 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
                       padding: '8px',
                       border: '1px solid #E5E7EB',
                       borderRadius: '4px',
-                      width: '100%'
+                      width: '100%',
+                      fontSize: '0.875rem'
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.875rem' }}>Salt (g)</label>
+                  <label style={{ 
+                    display: 'block', 
+                    marginBottom: '4px', 
+                    fontSize: '0.875rem',
+                    fontWeight: '500'
+                  }}>
+                    Salt (g)
+                  </label>
                   <input
                     type="number"
                     value={product.salt}
@@ -378,16 +431,27 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
                       padding: '8px',
                       border: '1px solid #E5E7EB',
                       borderRadius: '4px',
-                      width: '100%'
+                      width: '100%',
+                      fontSize: '0.875rem'
                     }}
                   />
                 </div>
               </div>
 
-              {/* Sourdough Section */}
+              {/* Sourdough Section - Responsive Layout */}
               <div style={{ marginBottom: '24px' }}>
-                <h3 style={{ marginBottom: '12px', fontSize: '1rem', fontWeight: '600' }}>Sourdough</h3>
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <h3 style={{ 
+                  marginBottom: '12px', 
+                  fontSize: '1rem', 
+                  fontWeight: '600' 
+                }}>
+                  Sourdough
+                </h3>
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
                   <select
                     value={product.sourdough.type}
                     onChange={(e) => handleSourdoughTypeChange(
@@ -398,7 +462,9 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
                       padding: '8px',
                       border: '1px solid #E5E7EB',
                       borderRadius: '4px',
-                      width: '200px'
+                      width: '100%',
+                      maxWidth: '200px',
+                      fontSize: '0.875rem'
                     }}
                   >
                     <option value="none">None</option>
@@ -408,7 +474,11 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
                   </select>
 
                   {product.sourdough.type !== 'none' && (
-                    <>
+                    <div style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      gap: '12px'
+                    }}>
                       <input
                         type="number"
                         value={product.sourdough.weight}
@@ -418,45 +488,81 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
                           padding: '8px',
                           border: '1px solid #E5E7EB',
                           borderRadius: '4px',
-                          width: '120px',
-                          opacity: product.sourdough.is20Percent ? 0.7 : 1
+                          width: '100%',
+                          maxWidth: '120px',
+                          opacity: product.sourdough.is20Percent ? 0.7 : 1,
+                          fontSize: '0.875rem'
                         }}
+                        placeholder="Weight (g)"
                       />
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <label style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        fontSize: '0.875rem'
+                      }}>
                         <input
                           type="checkbox"
                           checked={product.sourdough.is20Percent}
                           onChange={() => toggle20Percent(product.name)}
                           style={{ width: '16px', height: '16px' }}
                         />
-                        <span style={{ fontSize: '0.875rem' }}>20% of flour</span>
+                        <span>20% of flour</span>
                       </label>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Flour Diversion Section */}
+              {/* Flour Diversion Section - Responsive Layout */}
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <h3 style={{ fontSize: '1rem', fontWeight: '600' }}>Flour Diversion</h3>
-                  <button 
-                    onClick={() => addNewFlour(product.name)}
-                    style={{
-                      padding: '6px 12px',
-                      backgroundColor: '#3B82F6',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Add Flour
-                  </button>
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  gap: '12px',
+                  marginBottom: '12px'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '8px'
+                  }}>
+                    <h3 style={{ 
+                      fontSize: '1rem', 
+                      fontWeight: '600',
+                      margin: 0
+                    }}>
+                      Flour Diversion
+                    </h3>
+                    <button 
+                      onClick={() => addNewFlour(product.name)}
+                      style={{
+                        padding: '6px 12px',
+                        backgroundColor: '#3B82F6',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem'
+                      }}
+                    >
+                      Add Flour
+                    </button>
+                  </div>
                 </div>
 
                 {product.flours.map((flour, index) => (
-                  <div key={index} style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+                  <div key={index} style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    gap: '8px', 
+                    marginBottom: '12px',
+                    padding: '12px',
+                    backgroundColor: '#F9FAFB',
+                    borderRadius: '4px'
+                  }}>
                     <input
                       type="text"
                       placeholder="Flour name"
@@ -472,55 +578,99 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
                         padding: '8px',
                         border: '1px solid #E5E7EB',
                         borderRadius: '4px',
-                        flex: 1
+                        width: '100%',
+                        fontSize: '0.875rem'
                       }}
                     />
-                    <input
-                      type="number"
-                      value={flour.percentage}
-                      onChange={(e) => handleFlourPercentageChange(product.name, index, e.target.value)}
-                      style={{
-                        padding: '8px',
-                        border: '1px solid #E5E7EB',
-                        borderRadius: '4px',
-                        width: '100px'
-                      }}
-                    />
-                    <input
-                      type="number"
-                      value={flour.substitute}
-                      onChange={(e) => handleFlourSubstituteChange(product.name, index, e.target.value)}
-                      disabled={product.sourdough.type === 'none'}
-                      style={{
-                        padding: '8px',
-                        border: '1px solid #E5E7EB',
-                        borderRadius: '4px',
-                        width: '100px',
-                        opacity: product.sourdough.type === 'none' ? 0.7 : 1
-                      }}
-                    />
-                    <button
-                      onClick={() => removeFlour(product.name, index)}
-                      style={{
-                        padding: '8px',
-                        backgroundColor: '#EF4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      ×
-                    </button>
+                    <div style={{ 
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr auto',
+                      gap: '8px',
+                      alignItems: 'center'
+                    }}>
+                      <div>
+                        <label style={{ 
+                          display: 'block', 
+                          fontSize: '0.75rem',
+                          color: '#6B7280',
+                          marginBottom: '2px'
+                        }}>
+                          Percentage
+                        </label>
+                        <input
+                          type="number"
+                          value={flour.percentage}
+                          onChange={(e) => handleFlourPercentageChange(product.name, index, e.target.value)}
+                          style={{
+                            padding: '6px',
+                            border: '1px solid #E5E7EB',
+                            borderRadius: '4px',
+                            width: '100%',
+                            fontSize: '0.875rem'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ 
+                          display: 'block', 
+                          fontSize: '0.75rem',
+                          color: '#6B7280',
+                          marginBottom: '2px'
+                        }}>
+                          Substitute
+                        </label>
+                        <input
+                          type="number"
+                          value={flour.substitute}
+                          onChange={(e) => handleFlourSubstituteChange(product.name, index, e.target.value)}
+                          disabled={product.sourdough.type === 'none'}
+                          style={{
+                            padding: '6px',
+                            border: '1px solid #E5E7EB',
+                            borderRadius: '4px',
+                            width: '100%',
+                            opacity: product.sourdough.type === 'none' ? 0.7 : 1,
+                            fontSize: '0.875rem'
+                          }}
+                        />
+                      </div>
+                      <button
+                        onClick={() => removeFlour(product.name, index)}
+                        style={{
+                          padding: '6px 8px',
+                          backgroundColor: '#EF4444',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          alignSelf: 'end'
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
                   </div>
                 ))}
 
-                <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
-                  <div style={{ color: totalPercentage(product.flours) !== 100 ? '#EF4444' : 'inherit' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  gap: '8px', 
+                  marginTop: '12px',
+                  fontSize: '0.875rem'
+                }}>
+                  <div style={{ 
+                    color: totalPercentage(product.flours) !== 100 ? '#EF4444' : 'inherit',
+                    fontWeight: '500'
+                  }}>
                     Total Percentage: {totalPercentage(product.flours)}%
                   </div>
                   {product.sourdough.type !== 'none' && (
-                    <div style={{ color: totalSubstitute(product.flours) !== 10 ? '#EF4444' : 'inherit' }}>
+                    <div style={{ 
+                      color: totalSubstitute(product.flours) !== 10 ? '#EF4444' : 'inherit',
+                      fontWeight: '500'
+                    }}>
                       Total Substitute: {totalSubstitute(product.flours)}/10
                     </div>
                   )}
@@ -531,34 +681,43 @@ const EditContents: React.FC<EditContentsProps> = ({ onClose }) => {
         </div>
       ))}
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
-        <button
-          onClick={onClose}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#6B7280',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Cancel
-        </button>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        gap: '12px', 
+        marginTop: '24px'
+      }}>
         <button
           onClick={handleSaveChanges}
           style={{
-            padding: '10px 20px',
+            padding: '12px 20px',
             backgroundColor: '#10B981',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            fontSize: '0.875rem',
+            order: 1
           }}
           disabled={loading}
         >
           {loading ? 'Saving...' : 'Save Changes'}
+        </button>
+        <button
+          onClick={onClose}
+          style={{
+            padding: '12px 20px',
+            backgroundColor: '#6B7280',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            order: 2
+          }}
+        >
+          Cancel
         </button>
       </div>
       <div style={{ height: "50px" }} />
