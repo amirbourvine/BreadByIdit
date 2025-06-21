@@ -45,8 +45,6 @@
 .orders-container {
   display: flex;
   justify-content: center;
-  margin-left: var(--left-panel-width, min(256px, 25vw));
-  width: calc(100% - var(--left-panel-width, min(256px, 25vw)));
   height: 100vh;
   overflow: auto;
   padding: 1rem;

@@ -364,14 +364,13 @@ function App() {
     <div style={{ 
       display: 'flex', 
       height: '100vh', 
-      width: isLeftPanelCollapsed ? '60px' : (isMobile ? '80vw' : 'min(256px, 25vw)'),
+      width: '100vw', 
       margin: 0, 
       padding: 0,
       position: 'absolute',
       left: 0,
-      top: 0,
-      '--left-panel-width': isLeftPanelCollapsed ? '60px' : (isMobile ? '80vw' : 'min(256px, 25vw)')
-    } as React.CSSProperties}>
+      top: 0
+    }}>
       <LeftPanel 
         forms={forms} 
         onSelectForm={handleSelectForm}
@@ -387,7 +386,13 @@ function App() {
         isCollapsed={isLeftPanelCollapsed}
         onToggleCollapse={handleToggleLeftPanel}
       />
-      <div className="orders-container">
+      <div 
+        className="orders-container"
+        style={{
+          marginLeft: isLeftPanelCollapsed ? '60px' : (isMobile ? '80vw' : 'min(256px, 25vw)'),
+          width: isLeftPanelCollapsed ? 'calc(100% - 60px)' : (isMobile ? 'calc(100% - 80vw)' : 'calc(100% - min(256px, 25vw))')
+        }}
+      >
         {loading ? (
           <div style={{ 
             display: 'flex', 
