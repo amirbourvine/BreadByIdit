@@ -46,6 +46,16 @@ function App() {
   const [selectedOrdersProductsForm, setSelectedOrdersProductsForm] = useState<string>("");
   const [showEditSourdough, setShowEditSourdough] = useState<boolean>(false);
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleToggleLeftPanel = () => {
     setIsLeftPanelCollapsed(!isLeftPanelCollapsed);
@@ -354,13 +364,13 @@ function App() {
     <div style={{ 
       display: 'flex', 
       height: '100vh', 
-      width: '100vw', 
+      width: isLeftPanelCollapsed ? '60px' : (isMobile ? '80vw' : 'min(256px, 25vw)'),
       margin: 0, 
       padding: 0,
       position: 'absolute',
       left: 0,
       top: 0,
-      '--left-panel-width': isLeftPanelCollapsed ? '60px' : 'min(256px, 25vw)'
+      '--left-panel-width': isLeftPanelCollapsed ? '60px' : (isMobile ? '80vw' : 'min(256px, 25vw)')
     } as React.CSSProperties}>
       <LeftPanel 
         forms={forms} 
