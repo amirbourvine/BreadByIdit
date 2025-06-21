@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import FormItemEditor from './FormItemEditor';
 import { updateFormProducts } from '../services/api';
 
@@ -25,22 +25,27 @@ interface FormEditorProps {
 }
 
 function FormEditor({ formName, products, onFormUpdated, initialComment }: FormEditorProps) {
+  // State management
   const [editableProducts, setEditableProducts] = useState<{
-    [key: string]: {
-      selected: boolean;
-      product: ProductData;
-      order: number;
-    }
+    [key: string]: { selected: boolean; product: ProductData; order: number }
   }>({});
   const [productOrder, setProductOrder] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [formComment, setFormComment] = useState<string>("The bread comes sliced unless you specify otherwise here. You can also add additional notes here.");
+  const [formComment, setFormComment] = useState<string>(initialComment || "The bread comes sliced unless you specify otherwise here. You can also add additional notes here.");
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
-  
-  // Initialize editableProducts when products change
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Handle window resize for responsiveness
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Initialize products
   useEffect(() => {
     const initialSelections: {[key: string]: {selected: boolean; product: ProductData; order: number}} = {};
     const initialOrder: string[] = [];
@@ -59,18 +64,12 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
     
     setEditableProducts(initialSelections);
     setProductOrder(initialOrder);
-    
     setSubmitSuccess(false);
     setSubmitError(null);
   }, [products]);
-  
-  useEffect(() => {
-    if (initialComment) {
-      setFormComment(initialComment);
-    }
-  }, [initialComment]);
-  
-  const handleProductSelect = (productName: string, isSelected: boolean) => {
+
+  // Handlers
+  const handleProductSelect = useCallback((productName: string, isSelected: boolean) => {
     setEditableProducts(prev => ({
       ...prev,
       [productName]: {
@@ -82,9 +81,9 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
         }
       }
     }));
-  };
-  
-  const handleProductChange = (productName: string, updatedProduct: ProductData) => {
+  }, []);
+
+  const handleProductChange = useCallback((productName: string, updatedProduct: ProductData) => {
     setEditableProducts(prev => ({
       ...prev,
       [productName]: {
@@ -92,33 +91,23 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
         product: updatedProduct
       }
     }));
-  };
+  }, []);
 
   // Drag and drop handlers
-  const handleDragStart = (e: React.DragEvent, productName: string) => {
+  const handleDragStart = useCallback((e: React.DragEvent, productName: string) => {
     setDraggedItem(productName);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', productName);
-  };
+  }, []);
 
-  const handleDragOver = (e: React.DragEvent, productName: string) => {
+  const handleDragOver = useCallback((e: React.DragEvent, productName: string) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
     setDragOverItem(productName);
-  };
+  }, []);
 
-  const handleDragLeave = () => {
-    setDragOverItem(null);
-  };
-
-  const handleDrop = (e: React.DragEvent, targetProductName: string) => {
+  const handleDrop = useCallback((e: React.DragEvent, targetProductName: string) => {
     e.preventDefault();
-    
-    if (!draggedItem || draggedItem === targetProductName) {
-      setDraggedItem(null);
-      setDragOverItem(null);
-      return;
-    }
+    if (!draggedItem || draggedItem === targetProductName) return;
 
     const newOrder = [...productOrder];
     const draggedIndex = newOrder.indexOf(draggedItem);
@@ -130,480 +119,207 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
     setProductOrder(newOrder);
     setDraggedItem(null);
     setDragOverItem(null);
-  };
+  }, [draggedItem, productOrder]);
 
-  const handleDragEnd = () => {
+  const handleDragEnd = useCallback(() => {
     setDraggedItem(null);
     setDragOverItem(null);
-  };
+  }, []);
 
-  const moveProductUp = (productName: string) => {
+  const moveProduct = useCallback((productName: string, direction: 'up' | 'down') => {
     const currentIndex = productOrder.indexOf(productName);
-    if (currentIndex > 0) {
-      const newOrder = [...productOrder];
-      [newOrder[currentIndex], newOrder[currentIndex - 1]] = [newOrder[currentIndex - 1], newOrder[currentIndex]];
-      setProductOrder(newOrder);
-    }
-  };
-
-  const moveProductDown = (productName: string) => {
-    const currentIndex = productOrder.indexOf(productName);
-    if (currentIndex < productOrder.length - 1) {
-      const newOrder = [...productOrder];
-      [newOrder[currentIndex], newOrder[currentIndex + 1]] = [newOrder[currentIndex + 1], newOrder[currentIndex]];
-      setProductOrder(newOrder);
-    }
-  };
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    
+    if (newIndex < 0 || newIndex >= productOrder.length) return;
+    
+    const newOrder = [...productOrder];
+    [newOrder[currentIndex], newOrder[newIndex]] = 
+      [newOrder[newIndex], newOrder[currentIndex]];
+    
+    setProductOrder(newOrder);
+  }, [productOrder]);
 
   const handleSaveChanges = async () => {
     try {
       setIsSubmitting(true);
       setSubmitError(null);
       
-      const updatedProducts = productOrder.map((productName) => {
-        const item = editableProducts[productName];
-        return {
-          ...item.product,
-          existent: item.selected
-        };
-      });
+      const updatedProducts = productOrder.map(productName => ({
+        ...editableProducts[productName].product,
+        existent: editableProducts[productName].selected
+      }));
       
       await updateFormProducts(formName, updatedProducts, formComment);
-      
       setSubmitSuccess(true);
       onFormUpdated();
     } catch (error) {
       console.error('Error saving form changes:', error);
       setSubmitError('Failed to save changes. Please try again.');
-      setSubmitSuccess(false);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Responsive styles
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: isMobile ? '0 8px' : '0 16px'
+  };
+
+  const titleStyle: React.CSSProperties = {
+    textAlign: 'center',
+    margin: '12px 0',
+    fontSize: isMobile ? '1.4rem' : '1.8rem',
+    lineHeight: '1.3'
+  };
+
+  const sectionStyle: React.CSSProperties = {
+    border: '1px solid #e0e0e0',
+    borderRadius: '6px',
+    padding: isMobile ? '12px' : '16px',
+    marginBottom: '16px',
+    backgroundColor: '#fff'
+  };
+
+  const successBoxStyle: React.CSSProperties = {
+    padding: '16px',
+    backgroundColor: '#dff0d8',
+    borderRadius: '6px',
+    color: '#3c763d',
+    marginBottom: '20px',
+    textAlign: 'center'
+  };
+
+  const productItemStyle = (isDragging: boolean, isDragOver: boolean): React.CSSProperties => ({
+    position: 'relative',
+    opacity: isDragging ? 0.6 : 1,
+    border: isDragOver ? '2px dashed #4CAF50' : '1px solid #e0e0e0',
+    borderRadius: '6px',
+    backgroundColor: isDragOver ? '#f8fff8' : '#fafafa',
+    marginBottom: '10px',
+    padding: isMobile ? '12px 8px' : '16px 12px',
+    transition: 'all 0.2s ease'
+  });
+
+  const orderControlsStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'row' : 'column',
+    gap: isMobile ? '6px' : '4px',
+    marginBottom: isMobile ? '12px' : '0',
+    alignItems: 'center'
+  };
+
+  const orderButtonStyle = (disabled: boolean): React.CSSProperties => ({
+    width: '32px',
+    height: '32px',
+    border: '1px solid #ddd',
+    backgroundColor: disabled ? '#f5f5f5' : '#fff',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    borderRadius: '4px',
+    fontSize: '14px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  });
+
+  const orderNumberStyle: React.CSSProperties = {
+    width: '32px',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    color: '#555',
+    backgroundColor: '#f8f8f8',
+    border: '1px solid #ddd',
+    borderRadius: '4px'
+  };
+
+  const dragHandleStyle: React.CSSProperties = {
+    position: isMobile ? 'static' : 'absolute',
+    right: '10px',
+    top: '50%',
+    transform: isMobile ? 'none' : 'translateY(-50%)',
+    cursor: 'grab',
+    padding: '4px',
+    color: '#999',
+    fontSize: '20px',
+    userSelect: 'none'
+  };
+
+  const textareaStyle: React.CSSProperties = {
+    width: '100%',
+    minHeight: isMobile ? '90px' : '110px',
+    padding: '12px',
+    borderRadius: '6px',
+    border: '1px solid #ddd',
+    fontSize: '16px',
+    resize: 'vertical',
+    boxSizing: 'border-box',
+    lineHeight: '1.4'
+  };
+
+  const saveButtonStyle: React.CSSProperties = {
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    padding: '12px 24px',
+    fontSize: '16px',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+    fontWeight: 'bold',
+    opacity: isSubmitting ? 0.7 : 1,
+    width: isMobile ? '100%' : 'auto',
+    maxWidth: '300px',
+    margin: '0 auto',
+    display: 'block'
+  };
+
   return (
-    <div className="form-editor">
-      <style jsx>{`
-        .form-editor {
-          max-width: 100%;
-          margin: 0;
-          padding: 8px;
-          font-size: 14px;
-          line-height: 1.4;
-        }
-
-        @media (min-width: 768px) {
-          .form-editor {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 16px;
-            font-size: 16px;
-          }
-        }
-
-        .title {
-          text-align: center;
-          margin: 8px 0 16px 0;
-          font-size: 1.25rem;
-          font-weight: bold;
-          word-break: break-word;
-          line-height: 1.2;
-        }
-
-        @media (min-width: 768px) {
-          .title {
-            font-size: 1.75rem;
-            margin: 16px 0 24px 0;
-          }
-        }
-
-        .section {
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          padding: 12px;
-          margin-bottom: 12px;
-          background: white;
-        }
-
-        @media (min-width: 768px) {
-          .section {
-            padding: 20px;
-            margin-bottom: 20px;
-          }
-        }
-
-        .section-title {
-          margin: 0 0 8px 0;
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: #333;
-        }
-
-        @media (min-width: 768px) {
-          .section-title {
-            font-size: 1.25rem;
-            margin-bottom: 12px;
-          }
-        }
-
-        .section-description {
-          font-size: 12px;
-          color: #666;
-          margin-bottom: 12px;
-          line-height: 1.3;
-        }
-
-        @media (min-width: 768px) {
-          .section-description {
-            font-size: 14px;
-            margin-bottom: 16px;
-          }
-        }
-
-        .success-box {
-          padding: 16px;
-          background-color: #d4edda;
-          border: 1px solid #c3e6cb;
-          border-radius: 6px;
-          color: #155724;
-          margin-bottom: 16px;
-          text-align: center;
-        }
-
-        .success-title {
-          margin: 0 0 8px 0;
-          font-size: 1.1rem;
-          font-weight: 600;
-        }
-
-        @media (min-width: 768px) {
-          .success-title {
-            font-size: 1.25rem;
-          }
-        }
-
-        .success-message {
-          margin: 0 0 12px 0;
-          font-size: 13px;
-        }
-
-        @media (min-width: 768px) {
-          .success-message {
-            font-size: 14px;
-          }
-        }
-
-        .continue-btn {
-          background-color: #28a745;
-          color: white;
-          padding: 8px 16px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 13px;
-          font-weight: 500;
-        }
-
-        @media (min-width: 768px) {
-          .continue-btn {
-            padding: 10px 20px;
-            font-size: 14px;
-          }
-        }
-
-        .continue-btn:hover {
-          background-color: #218838;
-        }
-
-        .products-container {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        @media (min-width: 768px) {
-          .products-container {
-            gap: 12px;
-          }
-        }
-
-        .product-item {
-          position: relative;
-          border: 1px solid #e0e0e0;
-          border-radius: 6px;
-          background: white;
-          transition: all 0.2s ease;
-          cursor: move;
-          padding: 8px;
-        }
-
-        @media (min-width: 768px) {
-          .product-item {
-            padding: 12px;
-            margin-left: 50px;
-            margin-right: 40px;
-          }
-        }
-
-        .product-item.dragging {
-          opacity: 0.5;
-          transform: rotate(1deg);
-        }
-
-        .product-item.drag-over {
-          border: 2px dashed #28a745;
-          background-color: #f8fff8;
-        }
-
-        .mobile-controls {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 8px;
-          padding-bottom: 8px;
-          border-bottom: 1px solid #eee;
-        }
-
-        @media (min-width: 768px) {
-          .mobile-controls {
-            display: none;
-          }
-        }
-
-        .desktop-order-controls {
-          display: none;
-        }
-
-        @media (min-width: 768px) {
-          .desktop-order-controls {
-            display: flex;
-            position: absolute;
-            left: -45px;
-            top: 50%;
-            transform: translateY(-50%);
-            flex-direction: column;
-            gap: 2px;
-            align-items: center;
-            z-index: 10;
-          }
-        }
-
-        .desktop-drag-handle {
-          display: none;
-        }
-
-        @media (min-width: 768px) {
-          .desktop-drag-handle {
-            display: block;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: grab;
-            padding: 4px;
-            color: #999;
-            font-size: 16px;
-            user-select: none;
-          }
-        }
-
-        .order-controls {
-          display: flex;
-          gap: 4px;
-          align-items: center;
-        }
-
-        @media (min-width: 768px) {
-          .order-controls {
-            flex-direction: column;
-            gap: 2px;
-          }
-        }
-
-        .order-btn {
-          width: 28px;
-          height: 26px;
-          border: 1px solid #ccc;
-          background: white;
-          cursor: pointer;
-          border-radius: 3px;
-          font-size: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #333;
-        }
-
-        @media (min-width: 768px) {
-          .order-btn {
-            width: 24px;
-            height: 22px;
-            font-size: 11px;
-          }
-        }
-
-        .order-btn:disabled {
-          background: #f5f5f5;
-          color: #999;
-          cursor: not-allowed;
-        }
-
-        .order-btn:not(:disabled):hover {
-          background: #f0f0f0;
-        }
-
-        .order-number {
-          width: 28px;
-          height: 22px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          font-weight: 600;
-          color: #555;
-          background: #f8f8f8;
-          border: 1px solid #ddd;
-          border-radius: 3px;
-        }
-
-        @media (min-width: 768px) {
-          .order-number {
-            width: 24px;
-            height: 18px;
-            font-size: 11px;
-          }
-        }
-
-        .mobile-drag-handle {
-          cursor: grab;
-          padding: 4px;
-          color: #999;
-          font-size: 16px;
-          user-select: none;
-        }
-
-        @media (min-width: 768px) {
-          .mobile-drag-handle {
-            display: none;
-          }
-        }
-
-        .form-comment-textarea {
-          width: 100%;
-          min-height: 70px;
-          padding: 8px;
-          border-radius: 4px;
-          border: 1px solid #ccc;
-          font-family: inherit;
-          font-size: 14px;
-          resize: vertical;
-          box-sizing: border-box;
-        }
-
-        @media (min-width: 768px) {
-          .form-comment-textarea {
-            min-height: 80px;
-            padding: 10px;
-          }
-        }
-
-        .save-section {
-          text-align: center;
-          margin: 16px 0;
-        }
-
-        @media (min-width: 768px) {
-          .save-section {
-            margin: 24px 0;
-          }
-        }
-
-        .error-message {
-          color: #721c24;
-          background-color: #f8d7da;
-          border: 1px solid #f5c6cb;
-          padding: 8px;
-          border-radius: 4px;
-          margin-bottom: 12px;
-          font-size: 13px;
-        }
-
-        @media (min-width: 768px) {
-          .error-message {
-            font-size: 14px;
-            padding: 10px;
-          }
-        }
-
-        .save-btn {
-          background-color: #28a745;
-          color: white;
-          padding: 10px 20px;
-          font-size: 14px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 600;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          width: 100%;
-          max-width: 280px;
-        }
-
-        @media (min-width: 768px) {
-          .save-btn {
-            padding: 12px 24px;
-            font-size: 16px;
-            width: auto;
-          }
-        }
-
-        .save-btn:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-
-        .save-btn:not(:disabled):hover {
-          background-color: #218838;
-        }
-
-        .spacer {
-          height: 30px;
-        }
-
-        @media (min-width: 768px) {
-          .spacer {
-            height: 60px;
-          }
-        }
-      `}</style>
-
-      <h1 className="title">
-        Edit Form: {formName}
-      </h1>
+    <div style={containerStyle}>
+      <h1 style={titleStyle}>Edit Form: {formName}</h1>
       
       {submitSuccess ? (
-        <div className="success-box">
-          <h3 className="success-title">
+        <div style={successBoxStyle}>
+          <h3 style={{ margin: '0 0 10px 0', fontSize: '1.3rem' }}>
             Form saved successfully!
           </h3>
-          <p className="success-message">Your changes have been saved.</p>
           <button
             onClick={() => setSubmitSuccess(false)}
-            className="continue-btn"
+            style={{
+              backgroundColor: '#5cb85c',
+              color: 'white',
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              marginTop: '10px'
+            }}
           >
             Continue Editing
           </button>
         </div>
       ) : (
         <>
-          <div className="section">
-            <h2 className="section-title">
+          <div style={sectionStyle}>
+            <h2 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>
               Products in Form
             </h2>
-            <p className="section-description">
-              Use the arrow buttons to reorder products. The order here will be the order customers see.
+            <p style={{ 
+              fontSize: '14px', 
+              color: '#666', 
+              marginBottom: '16px',
+              lineHeight: '1.5'
+            }}>
+              {isMobile 
+                ? 'Use arrows to reorder or drag products'
+                : 'Drag products to reorder or use arrow buttons'}
             </p>
-            <div className="products-container">
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {productOrder.map((productName, index) => {
                 const productData = editableProducts[productName];
                 if (!productData) return null;
@@ -617,72 +333,51 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
                     draggable
                     onDragStart={(e) => handleDragStart(e, productName)}
                     onDragOver={(e) => handleDragOver(e, productName)}
-                    onDragLeave={handleDragLeave}
+                    onDragLeave={() => setDragOverItem(null)}
                     onDrop={(e) => handleDrop(e, productName)}
                     onDragEnd={handleDragEnd}
-                    className={`product-item ${isDragging ? 'dragging' : ''} ${isDragOver ? 'drag-over' : ''}`}
+                    style={productItemStyle(isDragging, isDragOver)}
                   >
-                    {/* Mobile controls */}
-                    <div className="mobile-controls">
-                      <div className="order-controls">
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: isMobile ? '12px' : '0'
+                    }}>
+                      <div style={orderControlsStyle}>
                         <button
-                          onClick={() => moveProductUp(productName)}
+                          onClick={() => moveProduct(productName, 'up')}
                           disabled={index === 0}
-                          className="order-btn"
-                          title="Move up"
+                          style={orderButtonStyle(index === 0)}
+                          aria-label="Move up"
                         >
                           ↑
                         </button>
-                        <div className="order-number">
+                        <div style={orderNumberStyle}>
                           {index + 1}
                         </div>
                         <button
-                          onClick={() => moveProductDown(productName)}
+                          onClick={() => moveProduct(productName, 'down')}
                           disabled={index === productOrder.length - 1}
-                          className="order-btn"
-                          title="Move down"
+                          style={orderButtonStyle(index === productOrder.length - 1)}
+                          aria-label="Move down"
                         >
                           ↓
                         </button>
                       </div>
-                      <div className="mobile-drag-handle">
+                      
+                      <div style={dragHandleStyle} aria-label="Drag handle">
                         ⋮⋮
                       </div>
                     </div>
-
-                    {/* Desktop controls */}
-                    <div className="desktop-order-controls">
-                      <button
-                        onClick={() => moveProductUp(productName)}
-                        disabled={index === 0}
-                        className="order-btn"
-                        title="Move up"
-                      >
-                        ↑
-                      </button>
-                      <div className="order-number">
-                        {index + 1}
-                      </div>
-                      <button
-                        onClick={() => moveProductDown(productName)}
-                        disabled={index === productOrder.length - 1}
-                        className="order-btn"
-                        title="Move down"
-                      >
-                        ↓
-                      </button>
-                    </div>
-
-                    <div className="desktop-drag-handle">
-                      ⋮⋮
-                    </div>
-
+                    
                     <div>
                       <FormItemEditor 
                         product={productData.product}
                         isSelected={productData.selected}
-                        onSelect={(isSelected: boolean) => handleProductSelect(productName, isSelected)}
-                        onProductChange={(updatedProduct: ProductData) => handleProductChange(productName, updatedProduct)}
+                        onSelect={handleProductSelect}
+                        onProductChange={handleProductChange}
+                        isMobile={isMobile}
                       />
                     </div>
                   </div>
@@ -691,24 +386,29 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
             </div>
           </div>
           
-          <div className="section">
-            <h2 className="section-title">
+          <div style={sectionStyle}>
+            <h2 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>
               Form Comment
             </h2>
-            <p className="section-description">
-              This comment will be shown to customers when they place an order.
-            </p>
             <textarea
               value={formComment}
               onChange={(e) => setFormComment(e.target.value)}
-              className="form-comment-textarea"
+              style={textareaStyle}
               placeholder="Enter a comment for this form..."
+              aria-label="Form comment"
             />
           </div>
           
-          <div className="save-section">
+          <div style={{ margin: '24px 0' }}>
             {submitError && (
-              <div className="error-message">
+              <div style={{ 
+                color: '#d32f2f', 
+                backgroundColor: '#ffebee', 
+                padding: '12px', 
+                borderRadius: '6px', 
+                marginBottom: '16px',
+                textAlign: 'center'
+              }}>
                 {submitError}
               </div>
             )}
@@ -716,12 +416,11 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
             <button 
               onClick={handleSaveChanges}
               disabled={isSubmitting}
-              className="save-btn"
+              style={saveButtonStyle}
+              aria-label="Save changes"
             >
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>
-            
-            <div className="spacer"></div>
           </div>
         </>
       )}
