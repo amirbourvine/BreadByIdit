@@ -512,7 +512,11 @@ def update_form(form_name):
 def get_products(date):
     """Get products for a specific date"""
     forms_data = read_forms()
-    products_data = read_orders()[date]["products"]
+
+    if date=="generic_products":
+        products_data = {}
+    else:
+        products_data = read_orders()[date]["products"]
 
     print("products_data:")
     print(products_data)
