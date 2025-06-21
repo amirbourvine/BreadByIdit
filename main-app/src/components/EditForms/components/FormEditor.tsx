@@ -190,33 +190,157 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
     }
   };
   
+  // Responsive styles
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: '0 10px',
+    '@media (max-width: 768px)': {
+      padding: '0 5px'
+    }
+  };
+
+  const titleStyle: React.CSSProperties = {
+    textAlign: 'center',
+    margin: '15px 0',
+    fontSize: window.innerWidth <= 768 ? '1.5rem' : '2rem',
+    wordBreak: 'break-word',
+    lineHeight: '1.2'
+  };
+
+  const sectionStyle: React.CSSProperties = {
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    padding: window.innerWidth <= 768 ? '10px' : '20px',
+    marginBottom: '15px'
+  };
+
+  const successBoxStyle: React.CSSProperties = {
+    padding: window.innerWidth <= 768 ? '15px' : '20px',
+    backgroundColor: '#dff0d8',
+    borderRadius: '4px',
+    color: '#3c763d',
+    marginBottom: '20px',
+    textAlign: 'center'
+  };
+
+  const productItemStyle = (isDragging: boolean, isDragOver: boolean): React.CSSProperties => ({
+    position: 'relative',
+    opacity: isDragging ? 0.5 : 1,
+    transform: isDragging ? 'rotate(2deg)' : 'none',
+    transition: 'all 0.2s ease',
+    border: isDragOver ? '2px dashed #4CAF50' : '1px solid #e0e0e0',
+    borderRadius: '4px',
+    backgroundColor: isDragOver ? '#f8fff8' : 'white',
+    cursor: 'move',
+    marginBottom: '10px',
+    padding: window.innerWidth <= 768 ? '10px 5px' : '15px 10px'
+  });
+
+  const orderControlsStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: window.innerWidth <= 768 ? 'row' : 'column',
+    gap: window.innerWidth <= 768 ? '5px' : '2px',
+    marginBottom: window.innerWidth <= 768 ? '10px' : '0',
+    alignItems: 'center',
+    justifyContent: window.innerWidth <= 768 ? 'flex-start' : 'center'
+  };
+
+  const orderButtonStyle = (disabled: boolean): React.CSSProperties => ({
+    width: window.innerWidth <= 768 ? '35px' : '30px',
+    height: window.innerWidth <= 768 ? '30px' : '25px',
+    border: '1px solid #ccc',
+    backgroundColor: disabled ? '#f5f5f5' : 'white',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    borderRadius: '3px',
+    fontSize: window.innerWidth <= 768 ? '14px' : '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: disabled ? '#999' : '#333'
+  });
+
+  const orderNumberStyle: React.CSSProperties = {
+    width: window.innerWidth <= 768 ? '35px' : '30px',
+    height: window.innerWidth <= 768 ? '25px' : '20px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: window.innerWidth <= 768 ? '14px' : '12px',
+    fontWeight: 'bold',
+    color: '#666',
+    backgroundColor: '#f8f8f8',
+    border: '1px solid #ddd',
+    borderRadius: '3px'
+  };
+
+  const dragHandleStyle: React.CSSProperties = {
+    position: window.innerWidth <= 768 ? 'static' : 'absolute',
+    right: window.innerWidth <= 768 ? 'auto' : '10px',
+    top: window.innerWidth <= 768 ? 'auto' : '50%',
+    transform: window.innerWidth <= 768 ? 'none' : 'translateY(-50%)',
+    cursor: 'grab',
+    padding: '5px',
+    color: '#999',
+    fontSize: '18px',
+    userSelect: 'none',
+    marginLeft: window.innerWidth <= 768 ? 'auto' : '0'
+  };
+
+  const productContentStyle: React.CSSProperties = {
+    marginLeft: window.innerWidth <= 768 ? '0' : '10px',
+    marginRight: window.innerWidth <= 768 ? '0' : '40px'
+  };
+
+  const textareaStyle: React.CSSProperties = {
+    width: '100%',
+    minHeight: window.innerWidth <= 768 ? '80px' : '100px',
+    padding: window.innerWidth <= 768 ? '8px' : '10px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontFamily: 'inherit',
+    fontSize: window.innerWidth <= 768 ? '16px' : '14px', // 16px prevents zoom on iOS
+    resize: 'vertical',
+    boxSizing: 'border-box'
+  };
+
+  const saveButtonStyle: React.CSSProperties = {
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    padding: window.innerWidth <= 768 ? '12px 20px' : '12px 24px',
+    fontSize: window.innerWidth <= 768 ? '14px' : '16px',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+    fontWeight: 'bold',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+    opacity: isSubmitting ? 0.7 : 1,
+    width: window.innerWidth <= 768 ? '100%' : 'auto',
+    maxWidth: window.innerWidth <= 768 ? '300px' : 'none'
+  };
+
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-      <h1 style={{ textAlign: 'center', margin: '20px 0' }}>
+    <div style={containerStyle}>
+      <h1 style={titleStyle}>
         Edit Form: {formName}
       </h1>
       
       {submitSuccess ? (
-        <div style={{
-          padding: '20px',
-          backgroundColor: '#dff0d8',
-          borderRadius: '4px',
-          color: '#3c763d',
-          marginBottom: '20px',
-          textAlign: 'center'
-        }}>
-          <h3>Form saved successfully!</h3>
-          <p>Your changes have been saved.</p>
+        <div style={successBoxStyle}>
+          <h3 style={{ margin: '0 0 10px 0', fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.5rem' }}>
+            Form saved successfully!
+          </h3>
+          <p style={{ margin: '0 0 15px 0' }}>Your changes have been saved.</p>
           <button
             onClick={() => setSubmitSuccess(false)}
             style={{
               backgroundColor: '#5cb85c',
               color: 'white',
-              padding: '10px 20px',
+              padding: window.innerWidth <= 768 ? '10px 16px' : '10px 20px',
               border: 'none',
               borderRadius: '4px',
-              marginTop: '15px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              fontSize: window.innerWidth <= 768 ? '14px' : '16px'
             }}
           >
             Continue Editing
@@ -224,15 +348,20 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
         </div>
       ) : (
         <>
-          <div style={{ 
-            border: '1px solid #ddd', 
-            borderRadius: '4px',
-            padding: '20px',
-            marginBottom: '20px'
-          }}>
-            <h2>Products in Form</h2>
-            <p style={{ fontSize: '14px', color: '#666', marginBottom: '15px' }}>
-              Drag products to reorder them, or use the arrow buttons. The order here will be the order customers see.
+          <div style={sectionStyle}>
+            <h2 style={{ margin: '0 0 10px 0', fontSize: window.innerWidth <= 768 ? '1.3rem' : '1.5rem' }}>
+              Products in Form
+            </h2>
+            <p style={{ 
+              fontSize: window.innerWidth <= 768 ? '13px' : '14px', 
+              color: '#666', 
+              marginBottom: '15px',
+              lineHeight: '1.4'
+            }}>
+              {window.innerWidth <= 768 
+                ? 'Use the arrow buttons to reorder products. Drag handle is also available.'
+                : 'Drag products to reorder them, or use the arrow buttons. The order here will be the order customers see.'
+              }
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {productOrder.map((productName, index) => {
@@ -251,101 +380,84 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
                     onDragLeave={handleDragLeave}
                     onDrop={(e) => handleDrop(e, productName)}
                     onDragEnd={handleDragEnd}
-                    style={{
-                      position: 'relative',
-                      opacity: isDragging ? 0.5 : 1,
-                      transform: isDragging ? 'rotate(2deg)' : 'none',
-                      transition: 'all 0.2s ease',
-                      border: isDragOver ? '2px dashed #4CAF50' : '1px solid #e0e0e0',
-                      borderRadius: '4px',
-                      backgroundColor: isDragOver ? '#f8fff8' : 'white',
-                      cursor: 'move'
-                    }}
+                    style={productItemStyle(isDragging, isDragOver)}
                   >
-                    {/* Order controls */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '-50px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '2px',
-                      zIndex: 10
-                    }}>
-                      <button
-                        onClick={() => moveProductUp(productName)}
-                        disabled={index === 0}
-                        style={{
-                          width: '30px',
-                          height: '25px',
-                          border: '1px solid #ccc',
-                          backgroundColor: index === 0 ? '#f5f5f5' : 'white',
-                          cursor: index === 0 ? 'not-allowed' : 'pointer',
-                          borderRadius: '3px',
-                          fontSize: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: index === 0 ? '#999' : '#333'
-                        }}
-                        title="Move up"
-                      >
-                        ↑
-                      </button>
-                      <div style={{
-                        width: '30px',
-                        height: '20px',
-                        display: 'flex',
+                    {/* Mobile layout: controls at top */}
+                    {window.innerWidth <= 768 && (
+                      <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        color: '#666',
-                        backgroundColor: '#f8f8f8',
-                        border: '1px solid #ddd',
-                        borderRadius: '3px'
+                        marginBottom: '10px',
+                        paddingBottom: '10px',
+                        borderBottom: '1px solid #eee'
                       }}>
-                        {index + 1}
+                        <div style={orderControlsStyle}>
+                          <button
+                            onClick={() => moveProductUp(productName)}
+                            disabled={index === 0}
+                            style={orderButtonStyle(index === 0)}
+                            title="Move up"
+                          >
+                            ↑
+                          </button>
+                          <div style={orderNumberStyle}>
+                            {index + 1}
+                          </div>
+                          <button
+                            onClick={() => moveProductDown(productName)}
+                            disabled={index === productOrder.length - 1}
+                            style={orderButtonStyle(index === productOrder.length - 1)}
+                            title="Move down"
+                          >
+                            ↓
+                          </button>
+                        </div>
+                        <div style={dragHandleStyle}>
+                          ⋮⋮
+                        </div>
                       </div>
-                      <button
-                        onClick={() => moveProductDown(productName)}
-                        disabled={index === productOrder.length - 1}
-                        style={{
-                          width: '30px',
-                          height: '25px',
-                          border: '1px solid #ccc',
-                          backgroundColor: index === productOrder.length - 1 ? '#f5f5f5' : 'white',
-                          cursor: index === productOrder.length - 1 ? 'not-allowed' : 'pointer',
-                          borderRadius: '3px',
-                          fontSize: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: index === productOrder.length - 1 ? '#999' : '#333'
-                        }}
-                        title="Move down"
-                      >
-                        ↓
-                      </button>
-                    </div>
+                    )}
 
-                    {/* Drag handle */}
-                    <div style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      cursor: 'grab',
-                      padding: '5px',
-                      color: '#999',
-                      fontSize: '18px',
-                      userSelect: 'none'
-                    }}>
-                      ⋮⋮
-                    </div>
+                    {/* Desktop layout: absolute positioned controls */}
+                    {window.innerWidth > 768 && (
+                      <>
+                        <div style={{
+                          position: 'absolute',
+                          left: '-50px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          ...orderControlsStyle,
+                          zIndex: 10
+                        }}>
+                          <button
+                            onClick={() => moveProductUp(productName)}
+                            disabled={index === 0}
+                            style={orderButtonStyle(index === 0)}
+                            title="Move up"
+                          >
+                            ↑
+                          </button>
+                          <div style={orderNumberStyle}>
+                            {index + 1}
+                          </div>
+                          <button
+                            onClick={() => moveProductDown(productName)}
+                            disabled={index === productOrder.length - 1}
+                            style={orderButtonStyle(index === productOrder.length - 1)}
+                            title="Move down"
+                          >
+                            ↓
+                          </button>
+                        </div>
 
-                    <div style={{ marginLeft: '10px', marginRight: '40px' }}>
+                        <div style={dragHandleStyle}>
+                          ⋮⋮
+                        </div>
+                      </>
+                    )}
+
+                    <div style={productContentStyle}>
                       <FormItemEditor 
                         product={productData.product}
                         isSelected={productData.selected}
@@ -359,45 +471,39 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
             </div>
           </div>
           
-          {/* Add Form Comment Section */}
-          <div style={{ 
-            border: '1px solid #ddd', 
-            borderRadius: '4px',
-            padding: '20px',
-            marginBottom: '20px'
-          }}>
-            <h2>Form Comment</h2>
-            <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+          {/* Form Comment Section */}
+          <div style={sectionStyle}>
+            <h2 style={{ margin: '0 0 10px 0', fontSize: window.innerWidth <= 768 ? '1.3rem' : '1.5rem' }}>
+              Form Comment
+            </h2>
+            <p style={{ 
+              fontSize: window.innerWidth <= 768 ? '13px' : '14px', 
+              color: '#666', 
+              marginBottom: '10px',
+              lineHeight: '1.4'
+            }}>
               This comment will be shown to customers when they place an order.
             </p>
             <textarea
               value={formComment}
               onChange={(e) => setFormComment(e.target.value)}
-              style={{
-                width: '100%',
-                minHeight: '100px',
-                padding: '10px',
-                borderRadius: '4px',
-                border: '1px solid #ccc',
-                fontFamily: 'inherit',
-                fontSize: '14px',
-                resize: 'vertical'
-              }}
+              style={textareaStyle}
               placeholder="Enter a comment for this form..."
             />
           </div>
           
           <div style={{ 
             textAlign: 'center', 
-            margin: '20px 0'
+            margin: window.innerWidth <= 768 ? '15px 0' : '20px 0'
           }}>
             {submitError && (
               <div style={{ 
                 color: 'red', 
                 backgroundColor: '#f8d7da', 
-                padding: '10px', 
+                padding: window.innerWidth <= 768 ? '8px' : '10px', 
                 borderRadius: '4px', 
-                marginBottom: '15px' 
+                marginBottom: '15px',
+                fontSize: window.innerWidth <= 768 ? '13px' : '14px'
               }}>
                 {submitError}
               </div>
@@ -406,23 +512,12 @@ function FormEditor({ formName, products, onFormUpdated, initialComment }: FormE
             <button 
               onClick={handleSaveChanges}
               disabled={isSubmitting}
-              style={{
-                backgroundColor: '#4CAF50',
-                color: 'white',
-                padding: '12px 24px',
-                fontSize: '16px',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                fontWeight: 'bold',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                opacity: isSubmitting ? 0.7 : 1
-              }}
+              style={saveButtonStyle}
             >
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>
             
-            <div style={{ height: '80px' }}></div>
+            <div style={{ height: window.innerWidth <= 768 ? '40px' : '80px' }}></div>
           </div>
         </>
       )}
