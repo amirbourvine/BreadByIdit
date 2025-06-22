@@ -5,7 +5,7 @@ import os
 import copy
 from datetime import datetime
 from flask import send_from_directory
-
+import urllib.parse
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -355,28 +355,35 @@ def upload_image():
         "imagePath": f"/images/{filename}"
     })
 
-
-# Update or add this route to your Flask backend
-@app.route('/api/images/<filename>', methods=['GET'])
+# Update the image serving route
+@app.route('/api/images/<path:filename>', methods=['GET'])
 def get_image(filename):
     """Serve product images from the images directory"""
-    # Remove any file extension from the request as we're using product names
-    # and will append .jpg ourselves
-    base_filename = os.path.splitext(filename)[0]
-    
-    # Create the full filename with .jpg extension
-    full_filename = f"{base_filename}.jpg"
-    
-    # Check if file exists
-    if os.path.exists(os.path.join(UPLOAD_FOLDER, full_filename)):
-        # Serve the file from the images directory
-        return send_from_directory(UPLOAD_FOLDER, full_filename)
-    else:
-        # Return a 404 if the image doesn't exist
+    try:
+        # Properly decode URL-encoded filename
+        decoded_filename = urllib.parse.unquote(filename)
+        
+        # Check if file exists with the decoded name
+        if os.path.exists(os.path.join(UPLOAD_FOLDER, decoded_filename)):
+            return send_from_directory(UPLOAD_FOLDER, decoded_filename)
+        
+        # Check if file exists with .jpg extension
+        if not decoded_filename.lower().endswith('.jpg'):
+            jpg_filename = decoded_filename + '.jpg'
+            if os.path.exists(os.path.join(UPLOAD_FOLDER, jpg_filename)):
+                return send_from_directory(UPLOAD_FOLDER, jpg_filename)
+        
+        # Return 404 if neither exists
         return jsonify({
             "success": False,
-            "error": "Image not found"
+            "error": f"Image not found: {decoded_filename}"
         }), 404
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": f"Error retrieving image: {str(e)}"
+        }), 500
 
 
 # Update create_form route to include default comment
