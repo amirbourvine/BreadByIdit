@@ -355,34 +355,75 @@ def upload_image():
         "imagePath": f"/images/{filename}"
     })
 
-# Update the image serving route
+import os
+import urllib.parse
+import unicodedata
+import logging
+from flask import send_from_directory, jsonify
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 @app.route('/api/images/<path:filename>', methods=['GET'])
 def get_image(filename):
-    """Serve product images from the images directory"""
+    """Serve product images with proper Hebrew filename handling"""
     try:
-        # Properly decode URL-encoded filename
+        # Decode URL-encoded filename
         decoded_filename = urllib.parse.unquote(filename)
+        logger.info(f"Requested image: {decoded_filename}")
         
-        # Check if file exists with the decoded name
-        if os.path.exists(os.path.join(UPLOAD_FOLDER, decoded_filename)):
-            return send_from_directory(UPLOAD_FOLDER, decoded_filename)
+        # Normalize Unicode to handle different character representations
+        normalized_filename = unicodedata.normalize('NFC', decoded_filename)
+        logger.info(f"Normalized filename: {normalized_filename}")
         
-        # Check if file exists with .jpg extension
-        if not decoded_filename.lower().endswith('.jpg'):
-            jpg_filename = decoded_filename + '.jpg'
-            if os.path.exists(os.path.join(UPLOAD_FOLDER, jpg_filename)):
+        # Check if file exists with the exact name
+        exact_path = os.path.join(UPLOAD_FOLDER, normalized_filename)
+        if os.path.exists(exact_path):
+            logger.info(f"Serving exact match: {normalized_filename}")
+            return send_from_directory(UPLOAD_FOLDER, normalized_filename)
+        
+        # Check for .jpg extension if not already present
+        if not normalized_filename.lower().endswith('.jpg'):
+            jpg_filename = normalized_filename + '.jpg'
+            jpg_path = os.path.join(UPLOAD_FOLDER, jpg_filename)
+            
+            if os.path.exists(jpg_path):
+                logger.info(f"Serving JPG version: {jpg_filename}")
                 return send_from_directory(UPLOAD_FOLDER, jpg_filename)
         
-        # Return 404 if neither exists
+        # Case-insensitive search for Hebrew filenames
+        if os.path.exists(UPLOAD_FOLDER):
+            for file in os.listdir(UPLOAD_FOLDER):
+                # Normalize for comparison
+                normalized_file = unicodedata.normalize('NFC', file)
+                
+                # Compare normalized names case-insensitively
+                if normalized_filename.lower() == normalized_file.lower():
+                    logger.info(f"Found case-insensitive match: {file}")
+                    return send_from_directory(UPLOAD_FOLDER, file)
+                
+                # Check without extension
+                base_file, ext = os.path.splitext(normalized_file)
+                if normalized_filename.lower() == base_file.lower():
+                    logger.info(f"Found base match: {file}")
+                    return send_from_directory(UPLOAD_FOLDER, file)
+        
+        # Log directory contents for debugging
+        files = os.listdir(UPLOAD_FOLDER)
+        logger.error(f"Image not found. Directory contents: {files}")
+        
         return jsonify({
             "success": False,
-            "error": f"Image not found: {decoded_filename}"
+            "error": f"Image not found: {normalized_filename}",
+            "searched_files": files  # For debugging
         }), 404
         
     except Exception as e:
+        logger.exception(f"Error retrieving image: {str(e)}")
         return jsonify({
             "success": False,
-            "error": f"Error retrieving image: {str(e)}"
+            "error": f"Internal server error: {str(e)}"
         }), 500
 
 
