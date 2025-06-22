@@ -371,42 +371,49 @@ def get_image(filename):
     try:
         # Decode URL-encoded filename
         decoded_filename = urllib.parse.unquote(filename)
-        logger.info(f"Requested image: {decoded_filename}")
+        logger.info(f"Requested image: {repr(decoded_filename)}")
         
-        # Normalize Unicode to handle different character representations
-        normalized_filename = unicodedata.normalize('NFC', decoded_filename)
-        logger.info(f"Normalized filename: {normalized_filename}")
+        # Normalize Unicode and strip extra spaces
+        normalized_filename = unicodedata.normalize('NFC', decoded_filename).strip()
+        logger.info(f"Normalized filename: {repr(normalized_filename)}")
         
-        # Check if file exists with the exact name
+        # Try exact match first
         exact_path = os.path.join(UPLOAD_FOLDER, normalized_filename)
         if os.path.exists(exact_path):
             logger.info(f"Serving exact match: {normalized_filename}")
             return send_from_directory(UPLOAD_FOLDER, normalized_filename)
         
-        # Check for .jpg extension if not already present
-        if not normalized_filename.lower().endswith('.jpg'):
-            jpg_filename = normalized_filename + '.jpg'
-            jpg_path = os.path.join(UPLOAD_FOLDER, jpg_filename)
-            
-            if os.path.exists(jpg_path):
-                logger.info(f"Serving JPG version: {jpg_filename}")
-                return send_from_directory(UPLOAD_FOLDER, jpg_filename)
+        # Try with .jpg extension
+        jpg_filename = normalized_filename + '.jpg'
+        jpg_path = os.path.join(UPLOAD_FOLDER, jpg_filename)
+        if os.path.exists(jpg_path):
+            logger.info(f"Serving JPG version: {jpg_filename}")
+            return send_from_directory(UPLOAD_FOLDER, jpg_filename)
         
         # Case-insensitive search for Hebrew filenames
         if os.path.exists(UPLOAD_FOLDER):
             for file in os.listdir(UPLOAD_FOLDER):
-                # Normalize for comparison
-                normalized_file = unicodedata.normalize('NFC', file)
+                # Normalize and strip directory filenames
+                normalized_file = unicodedata.normalize('NFC', file).strip()
                 
-                # Compare normalized names case-insensitively
+                # Compare normalized names
+                if normalized_filename == normalized_file:
+                    logger.info(f"Found normalized match: {file}")
+                    return send_from_directory(UPLOAD_FOLDER, file)
+                
+                # Compare with .jpg extension
+                if normalized_filename + '.jpg' == normalized_file:
+                    logger.info(f"Found normalized JPG match: {file}")
+                    return send_from_directory(UPLOAD_FOLDER, file)
+                
+                # Case-insensitive comparison
                 if normalized_filename.lower() == normalized_file.lower():
                     logger.info(f"Found case-insensitive match: {file}")
                     return send_from_directory(UPLOAD_FOLDER, file)
                 
-                # Check without extension
-                base_file, ext = os.path.splitext(normalized_file)
-                if normalized_filename.lower() == base_file.lower():
-                    logger.info(f"Found base match: {file}")
+                # Case-insensitive comparison with .jpg extension
+                if (normalized_filename + '.jpg').lower() == normalized_file.lower():
+                    logger.info(f"Found case-insensitive JPG match: {file}")
                     return send_from_directory(UPLOAD_FOLDER, file)
         
         # Log directory contents for debugging
@@ -416,7 +423,9 @@ def get_image(filename):
         return jsonify({
             "success": False,
             "error": f"Image not found: {normalized_filename}",
-            "searched_files": files  # For debugging
+            "searched_files": files,
+            "normalized_request": normalized_filename,
+            "original_request": decoded_filename
         }), 404
         
     except Exception as e:
