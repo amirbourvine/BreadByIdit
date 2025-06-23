@@ -68,21 +68,22 @@ const Home = () => {
       {/* Products Section */}
       <section className="products-section">
         <h1>המוצרים שלנו</h1>
-        <div className="products-grid">
-          {products.map((product, index) => (
-            <div key={index} className="product-card">
-              <img 
-                src={`http://13.49.120.33/api/images/${encodeURIComponent(product.name)}`} 
-                alt={product.name} 
-                className="product-image"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/placeholder.jpg'; // Fallback image
-                }}
-              />
-              <h3>{product.name}</h3>
+            <div className="products-grid">
+                {products.map((product, index) => (
+                    <div key={index} className="product-card">
+                    <img 
+                        src={`http://13.49.120.33/api/images/${encodeURIComponent(product.name)}`} 
+                        alt={product.name} 
+                        className="product-image"
+                        onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/placeholder.jpg';
+                        }}
+                    />
+                    {/* Add dir="auto" to handle mixed-direction text */}
+                    <h3 dir="auto">{product.name}</h3>
+                    </div>
+                ))}
             </div>
-          ))}
-        </div>
       </section>
     </div>
   );
