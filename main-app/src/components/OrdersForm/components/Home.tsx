@@ -24,10 +24,6 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  function forceRTL(text: string): string {
-    return `\u202B${text}\u202C`; // RLE (Right-to-Left Embedding) + PDF (Pop Directional Formatting)
-    }
-
 
   return (
     <div className="home-container">
@@ -84,8 +80,8 @@ const Home = () => {
                 }}
               />
               <h3 className="product-name">
-  {forceRTL(product.name)}
-</h3>
+                {product.name}
+              </h3>
 
 
 
