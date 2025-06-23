@@ -436,6 +436,27 @@ def get_image(filename):
         }), 500
 
 
+@app.route('/api/products/generic_products', methods=['GET'])
+def get_generic_products():
+    """Get generic products for homepage"""
+    forms_data = read_forms()
+    
+    if "generic_products" in forms_data:
+        # Return only products that exist
+        existent_products = [
+            p for p in forms_data["generic_products"].get("products", [])
+            if p.get("existent", True)
+        ]
+        return jsonify({
+            "success": True,
+            "products": existent_products
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "error": "Generic products not found"
+        }), 404
+
 # Update create_form route to include default comment
 @app.route('/api/forms', methods=['POST'])
 def create_form():
