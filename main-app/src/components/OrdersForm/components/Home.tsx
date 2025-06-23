@@ -70,7 +70,7 @@ const Home = () => {
           {products.map((product, index) => (
             <div key={index} className="product-card">
               <img 
-                src={`http://13.49.120.33/api/images/${encodeURIComponent(product.image)}`} 
+                src={`http://13.49.120.33/api/images/${encodeURIComponent(product.name)}`} 
                 alt={product.name} 
                 className="product-image"
                 onError={(e) => {
