@@ -21,18 +21,21 @@ const Home = () => {
         console.error('Failed to fetch products:', error);
       }
     };
-
     fetchProducts();
   }, []);
 
   return (
     <div className="home-container">
-      {/* Logo */}
-      <div className="logo-container">
+      {/* Logo added at the top of the form with larger size */}
+      <div style={{ textAlign: 'center', margin: '20px 0' }}>
         <img 
           src="/logo.png" 
           alt="Company Logo" 
-          className="main-logo"
+          style={{ 
+            maxWidth: '350px', 
+            width: '100%',
+            height: 'auto' 
+          }} 
         />
       </div>
 
@@ -55,7 +58,7 @@ const Home = () => {
            ניתן לקבל את הלחם פרוס. מומלץ לשמור את הלחם במקפיא החל מהיום השני 
             לאפייתו ולחמם חימום קל בטוסטר קופץ על מנת להחזירו לחיים.
           </p>
-          <p className="purple contact-info">
+          <p className="purple" style={{ textAlign: 'center' }}>
             טלפון: עדית- 050-5991166
           </p>
         </div>
@@ -75,7 +78,14 @@ const Home = () => {
                   (e.target as HTMLImageElement).src = '/placeholder.jpg';
                 }}
               />
-              <h3 className="product-name">
+              <h3 
+                style={{ 
+                  margin: '0 0 8px 0', 
+                  fontWeight: 'bold',
+                  fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+                  textAlign: 'center'
+                }}
+              >
                 {product.name}
               </h3>
             </div>
