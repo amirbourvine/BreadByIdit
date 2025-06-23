@@ -79,13 +79,16 @@ const Home = () => {
                         (e.target as HTMLImageElement).src = '/placeholder.jpg';
                         }}
                     />
-                    <h3 style={{ 
-                        margin: '0 0 8px 0', 
-                        fontWeight: 'bold',
-                        fontSize: window.innerWidth <= 768 ? '16px' : '18px',
-                        textAlign: 'center'
-                    }}>
-                        {product.name}
+                    <h3 
+                        dir="auto" // Add this attribute
+                        style={{ 
+                            margin: '0 0 8px 0', 
+                            fontWeight: 'bold',
+                            fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+                            textAlign: 'center'
+                        }}
+                        >
+                    {product.name}
                     </h3>
                     </div>
                 ))}
