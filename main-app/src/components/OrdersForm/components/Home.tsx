@@ -78,17 +78,19 @@ const Home = () => {
                   (e.target as HTMLImageElement).src = '/placeholder.jpg';
                 }}
               />
-              <div style={{ 
-                flex: 1, 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center',
-                justifyContent: 'center'
-                }}>
-                    <h3 style={{ margin: '0 0 8px 0', fontWeight: 'bold', textAlign: 'center' }}>
-                            {product.name}
-                    </h3>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ 
+                    flex: 1, 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                    }}>
+                        <h3 style={{ margin: '0 0 8px 0', fontWeight: 'bold', textAlign: 'center' }}>
+                                {product.name}
+                        </h3>
                 </div>
+              </div>
             </div>
           ))}
         </div>
