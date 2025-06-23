@@ -90,17 +90,17 @@ function LeftPanel({
 
   const handleFormSelect = (page: string) => {
     onSelectForm(page);
-    setIsNewOrderOpen(false);
+    // setIsNewOrderOpen(false);
   };
 
   const handleHomeClick = () => {
     onSelectForm('Home');
-    setIsNewOrderOpen(false);
+    // setIsNewOrderOpen(false);
   };
 
   const handleEditOrder = () => {
     onEditOrder();
-    setIsNewOrderOpen(false);
+    // setIsNewOrderOpen(false);
   };
 
   // Button style configuration
