@@ -80,7 +80,6 @@ const Home = () => {
                         }}
                     />
                     <h3 
-                        dir="auto" // Add this attribute
                         style={{ 
                             margin: '0 0 8px 0', 
                             fontWeight: 'bold',
