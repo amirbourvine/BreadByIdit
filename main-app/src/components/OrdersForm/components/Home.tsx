@@ -79,24 +79,17 @@ const Home = () => {
                         (e.target as HTMLImageElement).src = '/placeholder.jpg';
                         }}
                     />
-                    {/* Fixed bidirectional text handling */}
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      unicodeBidi: 'plaintext',
-                      direction: 'rtl'
-                    }}>
-                      <h3 
-                          style={{ 
-                              margin: '0 0 8px 0', 
-                              fontWeight: 'bold',
-                              fontSize: window.innerWidth <= 768 ? '16px' : '18px',
-                              textAlign: 'center',
-                          }}
-                          >
-                      {product.name}
-                      </h3>
-                    </div>
+                    <h3 
+                        dir="auto"
+                        style={{ 
+                            margin: '0 0 8px 0', 
+                            fontWeight: 'bold',
+                            fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+                            textAlign: 'center'
+                        }}
+                        >
+                    {product.name}
+                    </h3>
                     </div>
                 ))}
             </div>
