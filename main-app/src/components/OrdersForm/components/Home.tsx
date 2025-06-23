@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchProducts();
@@ -28,7 +28,7 @@ const Home = () => {
     }
   };
 
-  const getImageUrl = (productName) => {
+  const getImageUrl = (productName: any) => {
     return `http://13.49.120.33/api/images/${encodeURIComponent(productName)}`;
   };
 
@@ -130,7 +130,7 @@ const Home = () => {
 
           {!loading && !error && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((product, index) => (
+              {products.map((product: any, index) => (
                 <div 
                   key={index}
                   className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
@@ -140,7 +140,7 @@ const Home = () => {
                       src={getImageUrl(product.name)}
                       alt={product.name}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
+                      onError={(e: any) => {
                         e.target.src = '/api/placeholder/200/200';
                         e.target.alt = 'תמונה לא זמינה';
                       }}
