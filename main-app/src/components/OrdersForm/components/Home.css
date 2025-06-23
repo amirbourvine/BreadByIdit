@@ -74,6 +74,15 @@ h1 {
   background-color: #f0f0f0;
 }
 
+.product-name {
+  direction: rtl;
+  unicode-bidi: plaintext; /* or 'isolate' for better isolation in modern browsers */
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 8px 0;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .products-grid {

@@ -78,16 +78,7 @@ const Home = () => {
                   (e.target as HTMLImageElement).src = '/placeholder.jpg';
                 }}
               />
-              <h3
-  style={{
-    margin: '0 0 8px 0',
-    fontWeight: 'bold',
-    fontSize: window.innerWidth <= 768 ? '16px' : '18px',
-    textAlign: 'center',
-    direction: 'rtl', // Add this line
-    unicodeBidi: 'embed' // Add this line for explicit embedding
-  }}
->
+              <h3 className="product-name">
   {product.name}
 </h3>
 
