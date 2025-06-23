@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './Home.css';
+import { getProducts } from '../services/api';
 
 interface Product {
   name: string;
@@ -12,9 +13,8 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://13.49.120.33/api/products/generic_products');
-        const data = await response.json();
-        if (data.success && data.products) {
+        const data = await getProducts('generic_products');
+        if (data.products) {
           setProducts(data.products);
         }
       } catch (error) {
@@ -87,8 +87,8 @@ const Home = () => {
                             fontSize: window.innerWidth <= 768 ? '16px' : '18px',
                             textAlign: 'center'
                         }}
-                        >
-                      <bdi>{product.name}</bdi>
+                    >
+                        {product.name}
                     </h3>
                     </div>
                 ))}
