@@ -79,8 +79,8 @@ const Home = () => {
                         (e.target as HTMLImageElement).src = '/placeholder.jpg';
                         }}
                     />
+                    {/* Fixed bidirectional text handling using bdi element */}
                     <h3 
-                        dir="auto"
                         style={{ 
                             margin: '0 0 8px 0', 
                             fontWeight: 'bold',
@@ -88,7 +88,7 @@ const Home = () => {
                             textAlign: 'center'
                         }}
                         >
-                    {product.name}
+                      <bdi>{product.name}</bdi>
                     </h3>
                     </div>
                 ))}
