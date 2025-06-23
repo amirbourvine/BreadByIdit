@@ -27,10 +27,10 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Header with Logo */}
-      <header>
-        <img src="/logo.png" alt="Logo" className="logo" />
-      </header>
+      {/* Full-width Header with Logo */}
+      <div className="full-width-header">
+        <img src="/logo.png" alt="Logo" className="full-width-logo" />
+      </div>
 
       {/* About Section */}
       <section className="about-section">
@@ -64,6 +64,9 @@ const Home = () => {
                 src={`http://13.49.120.33/api/images/${encodeURIComponent(product.image)}`} 
                 alt={product.name} 
                 className="product-image"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/placeholder.jpg'; // Fallback image
+                }}
               />
               <h3>{product.name}</h3>
             </div>
