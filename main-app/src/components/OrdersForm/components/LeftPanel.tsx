@@ -103,6 +103,42 @@ function LeftPanel({
     setIsNewOrderOpen(false);
   };
 
+  // Button style configuration
+  const topButtonStyle = {
+    padding: '14px 16px',
+    backgroundColor: '#374151',
+    borderRadius: '8px',
+    textAlign: 'left' as const,
+    border: 'none',
+    color: 'white',
+    cursor: 'pointer',
+    fontSize: isMobile ? '1.1rem' : '1rem',
+    fontWeight: '500' as const,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    marginBottom: '12px' // Consistent spacing between buttons
+  };
+
+  const dropdownButtonStyle = {
+    padding: isMobile ? '12px 14px' : '10px 12px',
+    backgroundColor: '#4b5563',
+    borderRadius: '6px',
+    textAlign: 'left' as const,
+    border: 'none',
+    color: '#f3f4f6',
+    cursor: 'pointer',
+    fontSize: isMobile ? '1rem' : '0.9rem',
+    whiteSpace: 'nowrap' as const,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    transition: 'all 0.2s ease',
+    fontWeight: '400' as const
+  };
+
   return (
     <div 
       className="left-panel"
@@ -149,33 +185,16 @@ function LeftPanel({
         Order Management
       </h2>
 
-      {/* NEW: Home Button - Added above Place New Order */}
+      {/* Home Button */}
       <button
-        style={{ 
-          padding: '14px 16px',
-          backgroundColor: '#6366f1',
-          borderRadius: '8px',
-          textAlign: 'left',
-          border: 'none',
-          color: 'white',
-          cursor: 'pointer',
-          fontSize: isMobile ? '1.1rem' : '1rem',
-          fontWeight: '500',
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '12px',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-        }}
+        style={topButtonStyle}
         onClick={handleHomeClick}
         onMouseOver={(e) => {
-          e.currentTarget.style.backgroundColor = '#4f46e5';
+          e.currentTarget.style.backgroundColor = '#4b5563';
           e.currentTarget.style.transform = 'translateY(-1px)';
         }}
         onMouseOut={(e) => {
-          e.currentTarget.style.backgroundColor = '#6366f1';
+          e.currentTarget.style.backgroundColor = '#374151';
           e.currentTarget.style.transform = 'translateY(0)';
         }}
       >
@@ -183,26 +202,9 @@ function LeftPanel({
       </button>
 
       {/* Place New Order Section */}
-      <div style={{ marginBottom: '24px' }}>
+      <div>
         <button
-          style={{ 
-            padding: '14px 16px',
-            backgroundColor: '#374151',
-            borderRadius: '8px',
-            textAlign: 'left',
-            border: 'none',
-            color: 'white',
-            cursor: 'pointer',
-            fontSize: isMobile ? '1.1rem' : '1rem',
-            fontWeight: '500',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '12px',
-            transition: 'all 0.2s ease',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-          }}
+          style={topButtonStyle}
           onClick={() => setIsNewOrderOpen(!isNewOrderOpen)}
           onMouseOver={(e) => {
             e.currentTarget.style.backgroundColor = '#4b5563';
@@ -231,26 +233,13 @@ function LeftPanel({
             paddingLeft: '12px',
             borderLeft: '3px solid #6366f1',
             marginLeft: '8px',
-            paddingTop: '4px'
+            paddingTop: '4px',
+            marginBottom: '12px' // Maintain spacing below dropdown
           }}>
             {pages.map((page) => (
               <button
                 key={page}
-                style={{ 
-                  padding: isMobile ? '12px 14px' : '10px 12px', 
-                  backgroundColor: '#4b5563', 
-                  borderRadius: '6px',
-                  textAlign: 'left',
-                  border: 'none',
-                  color: '#f3f4f6',
-                  cursor: 'pointer',
-                  fontSize: isMobile ? '1rem' : '0.9rem',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  transition: 'all 0.2s ease',
-                  fontWeight: '400'
-                }}
+                style={dropdownButtonStyle}
                 onClick={() => handleFormSelect(page)}
                 onMouseOver={(e) => {
                   e.currentTarget.style.backgroundColor = '#6b7280';
@@ -271,28 +260,14 @@ function LeftPanel({
 
       {/* Edit Existing Order Button */}
       <button
-        style={{ 
-          padding: '14px 16px',
-          backgroundColor: '#dc2626',
-          borderRadius: '8px',
-          textAlign: 'left',
-          border: 'none',
-          color: 'white',
-          cursor: 'pointer',
-          fontSize: isMobile ? '1.1rem' : '1rem',
-          fontWeight: '500',
-          width: '100%',
-          marginBottom: '24px',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-        }}
+        style={topButtonStyle}
         onClick={handleEditOrder}
         onMouseOver={(e) => {
-          e.currentTarget.style.backgroundColor = '#b91c1c';
+          e.currentTarget.style.backgroundColor = '#4b5563';
           e.currentTarget.style.transform = 'translateY(-1px)';
         }}
         onMouseOut={(e) => {
-          e.currentTarget.style.backgroundColor = '#dc2626';
+          e.currentTarget.style.backgroundColor = '#374151';
           e.currentTarget.style.transform = 'translateY(0)';
         }}
       >
@@ -304,20 +279,11 @@ function LeftPanel({
         <button
           onClick={togglePanel}
           style={{
+            ...topButtonStyle,
             marginTop: 'auto',
-            padding: '12px 16px',
-            backgroundColor: '#6366f1',
-            borderRadius: '8px',
-            border: 'none',
-            color: 'white',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
+            marginBottom: '0',
             justifyContent: 'center',
-            fontSize: '0.9rem',
-            fontWeight: '500',
-            transition: 'all 0.2s ease',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+            backgroundColor: '#6366f1',
           }}
           onMouseOver={(e) => {
             e.currentTarget.style.backgroundColor = '#4f46e5';
