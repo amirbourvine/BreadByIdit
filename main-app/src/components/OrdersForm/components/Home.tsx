@@ -84,9 +84,7 @@ const Home = () => {
                             margin: '0 0 8px 0', 
                             fontWeight: 'bold',
                             fontSize: window.innerWidth <= 768 ? '16px' : '18px',
-                            textAlign: 'center',
-                            unicodeBidi: 'isolate',
-                            direction: 'rtl'
+                            textAlign: 'center'
                         }}
                         >
                     {product.name}
