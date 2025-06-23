@@ -93,6 +93,11 @@ function LeftPanel({
     setIsNewOrderOpen(false);
   };
 
+  const handleHomeClick = () => {
+    onSelectForm('Home');
+    setIsNewOrderOpen(false);
+  };
+
   const handleEditOrder = () => {
     onEditOrder();
     setIsNewOrderOpen(false);
@@ -143,6 +148,39 @@ function LeftPanel({
       }}>
         Order Management
       </h2>
+
+      {/* NEW: Home Button - Added above Place New Order */}
+      <button
+        style={{ 
+          padding: '14px 16px',
+          backgroundColor: '#6366f1',
+          borderRadius: '8px',
+          textAlign: 'left',
+          border: 'none',
+          color: 'white',
+          cursor: 'pointer',
+          fontSize: isMobile ? '1.1rem' : '1rem',
+          fontWeight: '500',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '12px',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+        }}
+        onClick={handleHomeClick}
+        onMouseOver={(e) => {
+          e.currentTarget.style.backgroundColor = '#4f46e5';
+          e.currentTarget.style.transform = 'translateY(-1px)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.backgroundColor = '#6366f1';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}
+      >
+        <span>Home</span>
+      </button>
 
       {/* Place New Order Section */}
       <div style={{ marginBottom: '24px' }}>
@@ -297,4 +335,4 @@ function LeftPanel({
   );
 }
 
-export default LeftPanel; 
+export default LeftPanel;
