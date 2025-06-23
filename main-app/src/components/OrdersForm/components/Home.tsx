@@ -24,17 +24,22 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  function wrapEnglishWords(text: string): (string | JSX.Element)[] {
-    const parts = text.split(/(\s+)/); // split by whitespace, preserving spaces
+  function formatBidiName(text: string): (string | JSX.Element)[] {
+    const words = text.split(/(\s+)/); // keep spaces
 
-    return parts.map((part, index) => {
-        const isEnglish = /^[\u0000-\u007F]+$/.test(part); // basic ASCII test
-        if (isEnglish && part.trim()) {
-        return <span key={index} dir="ltr">{part}</span>;
+    return words.map((word, i) => {
+        const hasLatin = /[A-Za-z]/.test(word);
+        if (hasLatin) {
+        return (
+            <span key={i} dir="ltr" style={{ display: 'inline-block' }}>
+            {word}
+            </span>
+        );
+        } else {
+        return word;
         }
-        return part;
     });
-    }
+  }
 
 
   return (
@@ -91,9 +96,20 @@ const Home = () => {
                   (e.target as HTMLImageElement).src = '/placeholder.jpg';
                 }}
               />
-              <h3 className="product-name">
-  {wrapEnglishWords(product.name)}
-</h3>
+              <div
+                className="product-name"
+                dir="rtl"
+                style={{
+                    unicodeBidi: 'plaintext',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+                    margin: '0 0 8px 0'
+                }}
+              >
+                {formatBidiName(product.name)}
+              </div>
+
 
             </div>
           ))}
