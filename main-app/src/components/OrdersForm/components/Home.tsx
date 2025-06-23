@@ -24,6 +24,19 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  function wrapEnglishWords(text: string): (string | JSX.Element)[] {
+    const parts = text.split(/(\s+)/); // split by whitespace, preserving spaces
+
+    return parts.map((part, index) => {
+        const isEnglish = /^[\u0000-\u007F]+$/.test(part); // basic ASCII test
+        if (isEnglish && part.trim()) {
+        return <span key={index} dir="ltr">{part}</span>;
+        }
+        return part;
+    });
+    }
+
+
   return (
     <div className="home-container">
       {/* Logo added at the top of the form with larger size */}
@@ -79,7 +92,7 @@ const Home = () => {
                 }}
               />
               <h3 className="product-name">
-  {product.name}
+  {wrapEnglishWords(product.name)}
 </h3>
 
             </div>
