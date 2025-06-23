@@ -21,7 +21,6 @@ const Home = () => {
         console.error('Failed to fetch products:', error);
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -68,31 +67,32 @@ const Home = () => {
       {/* Products Section */}
       <section className="products-section">
         <h1>המוצרים שלנו</h1>
-            <div className="products-grid">
-                {products.map((product, index) => (
-                    <div key={index} className="product-card">
-                    <img 
-                        src={`http://13.49.120.33/api/images/${encodeURIComponent(product.name)}`} 
-                        alt={product.name} 
-                        className="product-image"
-                        onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/placeholder.jpg';
-                        }}
-                    />
-                    {/* Fixed bidirectional text handling using bdi element */}
-                    <h3 
-                        style={{ 
-                            margin: '0 0 8px 0', 
-                            fontWeight: 'bold',
-                            fontSize: window.innerWidth <= 768 ? '16px' : '18px',
-                            textAlign: 'center'
-                        }}
-                    >
-                        {product.name}
-                    </h3>
-                    </div>
-                ))}
+        <div className="products-grid">
+          {products.map((product, index) => (
+            <div key={index} className="product-card">
+              <img 
+                src={`http://13.49.120.33/api/images/${encodeURIComponent(product.name)}`} 
+                alt={product.name} 
+                className="product-image"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/placeholder.jpg';
+                }}
+              />
+              <h3 
+                style={{ 
+                  margin: '0 0 8px 0', 
+                  fontWeight: 'bold',
+                  fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+                  textAlign: 'center',
+                  direction: 'rtl',
+                  unicodeBidi: 'bidi-override'
+                }}
+              >
+                {product.name}
+              </h3>
             </div>
+          ))}
+        </div>
       </section>
     </div>
   );
