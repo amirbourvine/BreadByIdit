@@ -79,8 +79,15 @@ const Home = () => {
                         (e.target as HTMLImageElement).src = '/placeholder.jpg';
                         }}
                     />
-                    {/* Add dir="auto" to handle mixed-direction text */}
-                    <h3 dir="auto">{product.name}</h3>
+                    <h3 style={{ 
+                        margin: '0 0 8px 0', 
+                        fontWeight: 'bold',
+                        fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+                        textAlign: window.innerWidth <= 768 ? 'center' : 'left',
+                        unicodeBidi: 'plaintext'  // Add this to fix bidirectional text
+                    }}>
+                        {product.name}
+                    </h3>
                     </div>
                 ))}
             </div>
