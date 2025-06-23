@@ -83,17 +83,17 @@ const Home = () => {
                 }}
               />
               <h3
-                style={{
-                    direction: 'rtl', // or 'ltr' if you're sure
-                    unicodeBidi: 'isolate',
-                    margin: '0 0 8px 0',
-                    fontWeight: 'bold',
-                    fontSize: window.innerWidth <= 768 ? '16px' : '18px',
-                    textAlign: 'center'
-                }}
-              >
-                {fixBidiText(product.name)}
-              </h3>
+  style={{
+    margin: '0 0 8px 0',
+    fontWeight: 'bold',
+    fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+    textAlign: 'center',
+    direction: 'rtl', // Add this line
+    unicodeBidi: 'embed' // Add this line for explicit embedding
+  }}
+>
+  {product.name}
+</h3>
 
             </div>
           ))}
