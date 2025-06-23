@@ -24,10 +24,6 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  function fixBidiText(text: string) {
-    return `\u202B${text}\u202C`; // RLE ... PDF
-  }
-
   return (
     <div className="home-container">
       {/* Logo added at the top of the form with larger size */}
