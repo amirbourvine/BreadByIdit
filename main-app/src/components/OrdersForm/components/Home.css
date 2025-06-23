@@ -2,7 +2,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  direction: rtl;
   text-align: right;
 }
 
@@ -72,20 +71,6 @@ h1 {
   object-fit: cover;
   border-radius: 8px;
   background-color: #f0f0f0;
-}
-
-/* Product name with bidirectional support */
-.product-name {
-  margin: 0 0 8px 0;
-  font-weight: bold;
-  text-align: center;
-  unicode-bidi: plaintext; /* Handles mixed direction text */
-  font-size: 18px;
-  line-height: 1.4;
-  min-height: 2.8em; /* Ensure consistent height */
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Responsive Design */
