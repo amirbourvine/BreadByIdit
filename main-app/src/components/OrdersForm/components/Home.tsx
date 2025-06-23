@@ -41,7 +41,7 @@ const Home = () => {
             <img 
               src="/logo.png" 
               alt="Logo" 
-              className="h-16 w-auto md:h-20 object-contain"
+              className="h-12 w-auto object-contain"
             />
           </div>
         </div>
@@ -55,9 +55,9 @@ const Home = () => {
             קצת עליי...
           </h2>
           
-          <div className="space-y-6 text-lg leading-relaxed text-right">
+          <div className="space-y-6 text-lg leading-relaxed">
             {/* Black text section */}
-            <div className="text-gray-800">
+            <div className="text-gray-800 text-right">
               <p className="mb-4">
                 הי, שמי עדית. אני אופה. בוגרת קורס קונדיטוריה ב"אסטלה", והשתלמויות מקצועיות של&nbsp;
                 <span className="font-semibold">master bakers</span>
@@ -86,9 +86,9 @@ const Home = () => {
             </div>
 
             {/* Black text section */}
-            <div className="text-gray-800">
-              <h3 className="text-xl font-bold mb-3 text-right">בנוסף:</h3>
-              <p className="text-right">
+            <div className="text-gray-800 text-right">
+              <h3 className="text-xl font-bold mb-3">בנוסף:</h3>
+              <p>
                 ניתן לקבל את הלחם פרוס. מומלץ לשמור את הלחם במקפיא החל מהיום השני לאפייתו 
                 ולחמם חימום קל בטוסטר קופץ על מנת להחזירו לחיים.
               </p>
