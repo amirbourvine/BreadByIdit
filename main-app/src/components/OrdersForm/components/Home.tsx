@@ -24,22 +24,9 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  function formatBidiName(text: string): (string | JSX.Element)[] {
-    const words = text.split(/(\s+)/); // keep spaces
-
-    return words.map((word, i) => {
-        const hasLatin = /[A-Za-z]/.test(word);
-        if (hasLatin) {
-        return (
-            <span key={i} dir="ltr" style={{ display: 'inline-block' }}>
-            {word}
-            </span>
-        );
-        } else {
-        return word;
-        }
-    });
-  }
+  function forceRTL(text: string): string {
+    return `\u202B${text}\u202C`; // RLE (Right-to-Left Embedding) + PDF (Pop Directional Formatting)
+    }
 
 
   return (
@@ -96,19 +83,10 @@ const Home = () => {
                   (e.target as HTMLImageElement).src = '/placeholder.jpg';
                 }}
               />
-              <div
-                className="product-name"
-                dir="rtl"
-                style={{
-                    unicodeBidi: 'plaintext',
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                    fontSize: window.innerWidth <= 768 ? '16px' : '18px',
-                    margin: '0 0 8px 0'
-                }}
-              >
-                {formatBidiName(product.name)}
-              </div>
+              <h3 className="product-name">
+  {forceRTL(product.name)}
+</h3>
+
 
 
             </div>
