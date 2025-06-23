@@ -76,11 +76,13 @@ h1 {
 
 .product-name {
   direction: rtl;
-  unicode-bidi: plaintext; /* or 'isolate' for better isolation in modern browsers */
-  font-weight: bold;
+  unicode-bidi: isolate;
   text-align: center;
+  font-weight: bold;
   margin: 0 0 8px 0;
+  font-size: 18px;
 }
+
 
 
 /* Responsive Design */
