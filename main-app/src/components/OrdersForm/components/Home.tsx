@@ -27,9 +27,17 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Full-width Header with Logo */}
-      <div className="full-width-header">
-        <img src="/logo.png" alt="Logo" className="full-width-logo" />
+      {/* Logo added at the top of the form with larger size */}
+      <div style={{ textAlign: 'center', margin: '20px 0' }}>
+        <img 
+          src="/logo.png" 
+          alt="Company Logo" 
+          style={{ 
+            maxWidth: '350px', 
+            width: '100%',
+            height: 'auto' 
+          }} 
+        />
       </div>
 
       {/* About Section */}
