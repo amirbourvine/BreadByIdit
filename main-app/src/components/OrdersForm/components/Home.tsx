@@ -24,6 +24,10 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  function fixBidiText(text: string) {
+    return `\u202B${text}\u202C`; // RLE ... PDF
+  }
+
   return (
     <div className="home-container">
       {/* Logo added at the top of the form with larger size */}
@@ -78,17 +82,19 @@ const Home = () => {
                   (e.target as HTMLImageElement).src = '/placeholder.jpg';
                 }}
               />
-              <h3 
-                dir="auto"
-                style={{ 
-                  margin: '0 0 8px 0', 
-                  fontWeight: 'bold',
-                  fontSize: window.innerWidth <= 768 ? '16px' : '18px',
-                  textAlign: 'center'
+              <h3
+                style={{
+                    direction: 'rtl', // or 'ltr' if you're sure
+                    unicodeBidi: 'isolate',
+                    margin: '0 0 8px 0',
+                    fontWeight: 'bold',
+                    fontSize: window.innerWidth <= 768 ? '16px' : '18px',
+                    textAlign: 'center'
                 }}
               >
-                {product.name}
+                {fixBidiText(product.name)}
               </h3>
+
             </div>
           ))}
         </div>
