@@ -139,6 +139,9 @@ function LeftPanel({
     fontWeight: '400' as const
   };
 
+  // Filter out "Home" page from dropdown
+  const filteredPages = pages.filter(page => page !== "Home");
+
   return (
     <div 
       className="left-panel"
@@ -225,7 +228,7 @@ function LeftPanel({
           </span>
         </button>
 
-        {isNewOrderOpen && (
+        {isNewOrderOpen && filteredPages.length > 0 && (
           <div style={{ 
             display: 'flex', 
             flexDirection: 'column',
@@ -236,7 +239,7 @@ function LeftPanel({
             paddingTop: '4px',
             marginBottom: '12px' // Maintain spacing below dropdown
           }}>
-            {pages.map((page) => (
+            {filteredPages.map((page) => (
               <button
                 key={page}
                 style={dropdownButtonStyle}
