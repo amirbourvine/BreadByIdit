@@ -24,6 +24,58 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  const rearrangeText = (text: string): string => {
+    // Regular expression to match Hebrew characters
+    const hebrewRegex = /[\u0590-\u05FF\u200F\u200E]/;
+    
+    // Split text into words
+    const words = text.split(' ');
+    
+    // Find indices where Hebrew and English sections change
+    interface Section {
+      type: 'hebrew' | 'english' | null;
+      words: string[];
+    }
+    
+    let sections: Section[] = [];
+    let currentSection: Section = { type: null, words: [] };
+    
+    words.forEach((word: string) => {
+      const isHebrew: boolean = hebrewRegex.test(word);
+      const wordType: 'hebrew' | 'english' = isHebrew ? 'hebrew' : 'english';
+      
+      if (currentSection.type === null || currentSection.type === wordType) {
+        currentSection.type = wordType;
+        currentSection.words.push(word);
+      } else {
+        sections.push(currentSection);
+        currentSection = { type: wordType, words: [word] };
+      }
+    });
+    
+    if (currentSection.words.length > 0) {
+      sections.push(currentSection);
+    }
+    
+    // Check if we have the pattern: hebrew_1 english hebrew_2
+    if (sections.length === 3 && 
+        sections[0].type === 'hebrew' && 
+        sections[1].type === 'english' && 
+        sections[2].type === 'hebrew') {
+      
+      // Rearrange to: hebrew_2 english hebrew_1
+      const hebrew1: string = sections[0].words.join(' ');
+      const english: string = sections[1].words.join(' ');
+      const hebrew2: string = sections[2].words.join(' ');
+      
+      return `${hebrew2} ${english} ${hebrew1}`;
+    }
+    
+    // If pattern doesn't match, return original text
+    return text;
+  };
+
+
 
   return (
     <div className="home-container">
@@ -80,7 +132,7 @@ const Home = () => {
                 }}
               />
               <h3 className="product-name">
-                {product.name}
+                {rearrangeText(product.name)}
               </h3>
 
 
