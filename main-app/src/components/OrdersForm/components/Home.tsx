@@ -70,7 +70,7 @@ const Home = () => {
       
       const hebrew1: string = sections[0].words.join(' ');
       const english: string = sections[1].words.join(' ');
-      const hebrew2: string = sections[2].words.join(' ');
+      const hebrew2: string = sections[2].words.join(' '); 
       
       const result = `${hebrew2} ${english} ${hebrew1}`;
       console.log('Rearranged:', result);
