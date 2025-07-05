@@ -25,53 +25,71 @@ const Home = () => {
   }, []);
 
   const rearrangeText = (text: string): string => {
-    // Regular expression to match Hebrew characters
-    const hebrewRegex = /[\u0590-\u05FF\u200F\u200E]/;
+    // Enhanced Hebrew detection - includes more Hebrew Unicode ranges
+    const hebrewRegex = /[\u0590-\u05FF\u200F\u200E\uFB1D-\uFB4F]/;
     
-    // Split text into words
-    const words = text.split(' ');
+    // Split text into words, preserving spaces
+    const words = text.trim().split(/\s+/);
     
-    // Find indices where Hebrew and English sections change
+    // Debug: log the original text and words
+    console.log('Original text:', text);
+    console.log('Words:', words);
+    
+    // Find sections of Hebrew and English
     interface Section {
-      type: 'hebrew' | 'english' | null;
+      type: 'hebrew' | 'english';
       words: string[];
     }
     
-    let sections: Section[] = [];
-    let currentSection: Section = { type: null, words: [] };
+    const sections: Section[] = [];
+    let currentSection: Section | null = null;
     
     words.forEach((word: string) => {
       const isHebrew: boolean = hebrewRegex.test(word);
       const wordType: 'hebrew' | 'english' = isHebrew ? 'hebrew' : 'english';
       
-      if (currentSection.type === null || currentSection.type === wordType) {
-        currentSection.type = wordType;
-        currentSection.words.push(word);
-      } else {
-        sections.push(currentSection);
+      console.log(`Word: "${word}" -> Type: ${wordType}`);
+      
+      if (currentSection === null || currentSection.type !== wordType) {
+        // Start new section
         currentSection = { type: wordType, words: [word] };
+        sections.push(currentSection);
+      } else {
+        // Add to current section
+        currentSection.words.push(word);
       }
     });
     
-    if (currentSection.words.length > 0) {
-      sections.push(currentSection);
-    }
+    console.log('Sections:', sections);
     
-    // Check if we have the pattern: hebrew_1 english hebrew_2
+    // Check if we have exactly 3 sections with pattern: hebrew -> english -> hebrew
     if (sections.length === 3 && 
         sections[0].type === 'hebrew' && 
         sections[1].type === 'english' && 
         sections[2].type === 'hebrew') {
       
-      // Rearrange to: hebrew_2 english hebrew_1
       const hebrew1: string = sections[0].words.join(' ');
       const english: string = sections[1].words.join(' ');
       const hebrew2: string = sections[2].words.join(' ');
       
-      return `${hebrew2} ${english} ${hebrew1}`;
+      const result = `${hebrew2} ${english} ${hebrew1}`;
+      console.log('Rearranged:', result);
+      return result;
     }
     
-    // If pattern doesn't match, return original text
+    // Also handle case where we have 2 sections: hebrew -> english or english -> hebrew
+    if (sections.length === 2) {
+      if (sections[0].type === 'hebrew' && sections[1].type === 'english') {
+        // hebrew english -> english hebrew
+        const hebrew: string = sections[0].words.join(' ');
+        const english: string = sections[1].words.join(' ');
+        const result = `${english} ${hebrew}`;
+        console.log('Rearranged (2 sections):', result);
+        return result;
+      }
+    }
+    
+    console.log('No rearrangement needed');
     return text;
   };
 
