@@ -25,8 +25,8 @@ const Home = () => {
   }, []);
 
   const rearrangeText = (text: string): string => {
-    // Enhanced Hebrew detection - includes more Hebrew Unicode ranges
-    const hebrewRegex = /[\u0590-\u05FF\u200F\u200E\uFB1D-\uFB4F]/;
+    // English letter detection - if word contains any English letters, it's English
+    const englishRegex = /[a-zA-Z]/;
     
     // Split text into words, preserving spaces
     const words = text.trim().split(/\s+/);
@@ -45,8 +45,8 @@ const Home = () => {
     let currentSection: Section | null = null;
     
     words.forEach((word: string) => {
-      const isHebrew: boolean = hebrewRegex.test(word);
-      const wordType: 'hebrew' | 'english' = isHebrew ? 'hebrew' : 'english';
+      const hasEnglish: boolean = englishRegex.test(word);
+      const wordType: 'hebrew' | 'english' = hasEnglish ? 'english' : 'hebrew';
       
       console.log(`Word: "${word}" -> Type: ${wordType}`);
       
@@ -77,21 +77,21 @@ const Home = () => {
       return result;
     }
     
-    // Also handle case where we have 2 sections: hebrew -> english or english -> hebrew
+    // Also handle case where we have 2 sections: swap them
     if (sections.length === 2) {
-      if (sections[0].type === 'hebrew' && sections[1].type === 'english') {
-        // hebrew english -> english hebrew
-        const hebrew: string = sections[0].words.join(' ');
-        const english: string = sections[1].words.join(' ');
-        const result = `${english} ${hebrew}`;
-        console.log('Rearranged (2 sections):', result);
-        return result;
-      }
+      const first: string = sections[0].words.join(' ');
+      const second: string = sections[1].words.join(' ');
+      
+      // Swap: first second -> second first
+      const result = `${second} ${first}`;
+      console.log('Rearranged (2 sections - swapped):', result);
+      return result;
     }
     
     console.log('No rearrangement needed');
     return text;
   };
+
 
 
 
