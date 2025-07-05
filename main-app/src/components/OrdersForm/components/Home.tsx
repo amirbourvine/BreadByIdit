@@ -7,7 +7,12 @@ interface Product {
   image: string;
 }
 
-const Home = () => {
+interface HomeProps {
+  pages?: string[];
+  onSelectForm?: (form: string) => void;
+}
+
+const Home = ({ pages = [], onSelectForm }: HomeProps) => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -70,7 +75,7 @@ const Home = () => {
       
       const hebrew1: string = sections[0].words.join(' ');
       const english: string = sections[1].words.join(' ');
-      const hebrew2: string = sections[2].words.join(' '); 
+      const hebrew2: string = sections[2].words.join(' ');
       
       const result = `${hebrew2} ${english} ${hebrew1}`;
       console.log('Rearranged:', result);
@@ -92,8 +97,31 @@ const Home = () => {
     return text;
   };
 
+  // Filter out "Home" page from forms list
+  const filteredPages = pages.filter(page => page !== "Home");
 
+  const handleFormSelect = (form: string) => {
+    if (onSelectForm) {
+      onSelectForm(form);
+    }
+  };
 
+  const formButtonStyle = {
+    padding: '14px 16px',
+    backgroundColor: '#374151',
+    borderRadius: '8px',
+    textAlign: 'center' as const,
+    border: 'none',
+    color: 'white',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '500' as const,
+    width: '100%',
+    maxWidth: '300px',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    margin: '8px'
+  };
 
   return (
     <div className="home-container">
@@ -135,6 +163,40 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Forms Section */}
+      {filteredPages.length > 0 && (
+        <section className="forms-section">
+          <h1>הזמינו בטפסים שלנו</h1>
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            justifyContent: 'center', 
+            gap: '16px',
+            margin: '20px 0' 
+          }}>
+            {filteredPages.map((page) => (
+              <button
+                key={page}
+                style={formButtonStyle}
+                onClick={() => handleFormSelect(page)}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#4b5563';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#374151';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                }}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Products Section */}
       <section className="products-section">
         <h1>המוצרים שלנו</h1>
@@ -152,9 +214,6 @@ const Home = () => {
               <h3 className="product-name">
                 {rearrangeText(product.name)}
               </h3>
-
-
-
             </div>
           ))}
         </div>

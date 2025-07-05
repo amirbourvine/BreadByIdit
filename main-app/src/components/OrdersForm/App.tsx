@@ -291,7 +291,10 @@ function App() {
           ) : showEditOrder ? (
             <EditOrder />
           ) : selectedForm === "Home" ? (
-            <Home />
+            <Home 
+              pages={pages} 
+              onSelectForm={handleSelectForm} 
+            />
           ) : (
             <Form 
               date={selectedForm} 
