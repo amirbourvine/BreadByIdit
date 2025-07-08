@@ -297,7 +297,7 @@ function LeftPanel({
     transition: 'all 0.2s ease',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     marginTop: 'auto',
-    marginBottom: panelOpen ? '0' : '-5px',
+    marginBottom: '0',
     position: 'relative',
     top: panelOpen ? '0' : '-5px'
   }}
@@ -312,6 +312,7 @@ function LeftPanel({
 >
   {panelOpen ? '◀ Collapse' : '▶ Expand'}
 </button>
+
       )}
     </div>
   );
