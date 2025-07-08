@@ -128,16 +128,14 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
   return (
     <div className="home-container">
       {/* Logo added at the top of the form with larger size */}
+      
       <div style={{ 
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        width: '100%',
+        width: '100vw',
+        marginLeft: 'calc(-50vw + 50%)',
+        marginRight: 'calc(-50vw + 50%)',
         backgroundColor: '#CCB79F',
         textAlign: 'center',
-        padding: '20px 0',
-        zIndex: 10
+        padding: '20px 0'
       }}>
         <img 
           src="/logo.png" 
@@ -149,7 +147,7 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
           }} 
         />
       </div>
-      
+
       {/* About Section */}
       <section className="about-section">
         <h1>קצת עליי...</h1>
