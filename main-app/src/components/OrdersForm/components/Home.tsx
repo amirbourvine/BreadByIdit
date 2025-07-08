@@ -126,10 +126,8 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
   
 
   return (
-    <div className="home-container">
-      {/* Logo added at the top of the form with larger size */}
-      
-      <div style={{ 
+    <>
+    <div style={{ 
         width: '100vw',
         marginLeft: 'calc(-50vw + 50%)',
         marginRight: 'calc(-50vw + 50%)',
@@ -147,6 +145,8 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
           }} 
         />
       </div>
+
+    <div className="home-container">
 
       {/* About Section */}
       <section className="about-section">
@@ -229,6 +229,7 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 
