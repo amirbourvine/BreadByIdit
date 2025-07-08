@@ -280,26 +280,27 @@ function LeftPanel({
       {/* Collapse button for desktop only */}
       {!isMobile && (
         <button
-          onClick={togglePanel}
-          style={{
-            ...topButtonStyle,
-            marginTop: 'auto',
-            marginBottom: '0',
-            justifyContent: 'center',
-            backgroundColor: '#6366f1',
-            transform: panelOpen ? 'translateY(0)' : 'translateY(-20px)' 
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#4f46e5';
-            e.currentTarget.style.transform = panelOpen ? 'translateY(-1px)' : 'translateY(-21px)'; // Adjust hover state too
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = '#6366f1';
-            e.currentTarget.style.transform = panelOpen ? 'translateY(0)' : 'translateY(-20px)'; // Reset to base position
-          }}
-        >
-          {panelOpen ? '◀ Collapse' : '▶ Expand'}
-        </button>
+  onClick={togglePanel}
+  style={{
+    ...topButtonStyle,
+    marginTop: 'auto',
+    marginBottom: '0',
+    justifyContent: 'center',
+    backgroundColor: '#6366f1',
+    position: 'relative', // Add this
+    bottom: panelOpen ? '0' : '5px' // Use bottom instead of transform
+  }}
+  onMouseOver={(e) => {
+    e.currentTarget.style.backgroundColor = '#4f46e5';
+    e.currentTarget.style.transform = 'translateY(-1px)';
+  }}
+  onMouseOut={(e) => {
+    e.currentTarget.style.backgroundColor = '#6366f1';
+    e.currentTarget.style.transform = 'translateY(0)';
+  }}
+>
+  {panelOpen ? '◀ Collapse' : '▶ Expand'}
+</button>
       )}
     </div>
   );
