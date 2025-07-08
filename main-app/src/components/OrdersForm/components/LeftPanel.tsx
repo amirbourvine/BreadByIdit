@@ -282,8 +282,8 @@ function LeftPanel({
         <div
   style={{
     marginTop: 'auto',
-    transform: panelOpen ? 'translateY(0)' : 'translateY(-5px)',
-    transition: 'transform 0.2s ease',
+    paddingBottom: panelOpen ? '0px' : '5px', // simulate upward shift
+    transition: 'padding-bottom 0.2s ease',
   }}
 >
   <button
@@ -316,6 +316,7 @@ function LeftPanel({
     {panelOpen ? '◀ Collapse' : '▶ Expand'}
   </button>
 </div>
+
 
 
 
