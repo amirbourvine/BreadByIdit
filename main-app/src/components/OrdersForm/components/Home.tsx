@@ -139,7 +139,7 @@ const Home = ({ pages = [], onSelectForm, panelOpen }: HomeProps) => {
   return (
     <>
 
-    {!panelOpen && <div style={{ height: '5px' }} />}
+    {(!panelOpen && !isMobile) && <div style={{ height: '5px' }} />}
 
 
     <div style={{ 
