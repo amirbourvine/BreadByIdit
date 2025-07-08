@@ -138,25 +138,28 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
   return (
     <>
     <div style={{ 
-      width: '100vw',
-      marginLeft: 'calc(-50vw + 50%)',
-      marginRight: 'calc(-50vw + 50%)',
-      backgroundColor: '#CCB79f',
-      textAlign: 'center',
-      padding: '20px 0',
-      marginTop: isMobile ? '0px' : '0px',
-      marginBottom: '0'
-    }}>
-      <img 
-        src="/logo.png" 
-        alt="Company Logo" 
-        style={{ 
-          maxWidth: '350px', 
-          width: '100%', 
-          height: 'auto' 
-        }} 
-      />
-    </div>
+  width: '100vw',
+  marginLeft: 'calc(-50vw + 50%)',
+  marginRight: 'calc(-50vw + 50%)',
+  backgroundColor: '#CCB79f',
+  textAlign: 'center',
+  padding: '20px 0',
+  marginTop: isMobile ? '0px' : '0px',
+  marginBottom: '0',
+  position: isMobile ? 'static' : 'fixed',
+  top: isMobile ? 'auto' : '20px',
+  zIndex: isMobile ? 'auto' : '1000'
+}}>
+  <img 
+    src="/logo.png" 
+    alt="Company Logo" 
+    style={{ 
+      maxWidth: '350px', 
+      width: '100%', 
+      height: 'auto' 
+    }} 
+  />
+</div>
 
     <div className="home-container">
 
