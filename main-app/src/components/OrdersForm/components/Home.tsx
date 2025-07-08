@@ -132,7 +132,7 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
         width: '100vw',
         marginLeft: 'calc(-50vw + 50%)',
         marginRight: 'calc(-50vw + 50%)',
-        backgroundColor: '#your-background-color',
+        backgroundColor: '#CCB79F',
         textAlign: 'center',
         padding: '20px 0'
       }}>
