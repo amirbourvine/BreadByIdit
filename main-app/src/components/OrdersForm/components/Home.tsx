@@ -129,8 +129,10 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
     <div className="home-container">
       {/* Logo added at the top of the form with larger size */}
       <div style={{ 
-        width: '100%', 
-        backgroundColor: '#CCB79F',
+        width: '100vw',
+        marginLeft: 'calc(-50vw + 50%)',
+        marginRight: 'calc(-50vw + 50%)',
+        backgroundColor: '#your-background-color',
         textAlign: 'center',
         padding: '20px 0'
       }}>
