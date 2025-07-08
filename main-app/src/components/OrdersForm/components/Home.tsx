@@ -10,9 +10,10 @@ interface Product {
 interface HomeProps {
   pages?: string[];
   onSelectForm?: (form: string) => void;
+  panelOpen?: boolean;
 }
 
-const Home = ({ pages = [], onSelectForm }: HomeProps) => {
+const Home = ({ pages = [], onSelectForm, panelOpen }: HomeProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -137,6 +138,10 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
 
   return (
     <>
+
+    {!panelOpen && <div style={{ height: '5px' }} />}
+
+
     <div style={{ 
       width: '100vw',
       marginLeft: 'calc(-50vw + 50%)',

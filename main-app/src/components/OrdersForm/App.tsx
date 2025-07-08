@@ -293,6 +293,7 @@ function App() {
             <Home 
               pages={pages} 
               onSelectForm={handleSelectForm} 
+              panelOpen={panelOpen}
             />
           ) : (
             <Form 
