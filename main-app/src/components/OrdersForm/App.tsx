@@ -171,7 +171,6 @@ function App() {
       position: 'absolute',
       left: 0,
       top: 0,
-      overflow: 'hidden'
     }}>
       {/* Overlay for mobile when panel is open */}
       {isMobile && panelOpen && (
