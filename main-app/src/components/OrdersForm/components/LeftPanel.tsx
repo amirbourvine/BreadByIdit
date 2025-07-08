@@ -283,7 +283,7 @@ function LeftPanel({
           onClick={togglePanel}
           style={{
             ...topButtonStyle,
-            marginTop: 'auto',
+            marginTop: '-8px',
             marginBottom: '0',
             justifyContent: 'center',
             backgroundColor: '#6366f1',
