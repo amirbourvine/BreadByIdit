@@ -297,7 +297,7 @@ function LeftPanel({
     transition: 'margin-bottom 0.2s ease, background-color 0.2s ease, transform 0.2s ease',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     marginTop: 'auto',
-    marginBottom: panelOpen ? '0px' : '5px',
+    marginBottom: panelOpen ? '0px' : '10px',
     position: 'relative'
   }}
   onMouseOver={(e) => {
