@@ -58,9 +58,13 @@ function Product({
     }, 0);
   };
   
+  // Calculate if any extras are ordered (total > 0)
+  const hasOrderedItems = calculateExtrasTotal() > 0;
+  
   return (
     <div 
       style={{ 
+        position: 'relative',
         border: inventoryError 
           ? '2px solid #dc3545' 
           : (isSelected ? '2px solid #4CAF50' : '1px solid #ddd'),
@@ -76,6 +80,26 @@ function Product({
       }}
       onClick={handleSelection}
     >
+      {/* Checkbox in top right corner */}
+      <div style={{
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        width: '20px',
+        height: '20px',
+        border: '1px solid #4CAF50',
+        borderRadius: '3px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        zIndex: 2
+      }}>
+        {hasOrderedItems && (
+          <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>✓</span>
+        )}
+      </div>
+      
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ marginRight: '16px', position: 'relative' }}>
           <img 
@@ -201,6 +225,18 @@ function Product({
           }}>
             Price: {calculateExtrasTotal().toFixed(2)} ILS
           </div>
+        </div>
+      )}
+      
+      {/* Arrow indicator at bottom */}
+      {!soldOut && (
+        <div style={{ 
+          textAlign: 'center', 
+          marginTop: '10px',
+          fontSize: '14px',
+          color: '#666'
+        }}>
+          {isSelected ? '▲' : '▼'}
         </div>
       )}
     </div>
