@@ -14,6 +14,16 @@ interface HomeProps {
 
 const Home = ({ pages = [], onSelectForm }: HomeProps) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -128,23 +138,25 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
   return (
     <>
     <div style={{ 
-        width: '100vw',
-        marginLeft: 'calc(-50vw + 50%)',
-        marginRight: 'calc(-50vw + 50%)',
-        backgroundColor: '#CCB79F',
-        textAlign: 'center',
-        padding: '20px 0'
-      }}>
-        <img 
-          src="/logo.png" 
-          alt="Company Logo" 
-          style={{ 
-            maxWidth: '350px', 
-            width: '100%', 
-            height: 'auto' 
-          }} 
-        />
-      </div>
+      width: '100vw',
+      marginLeft: 'calc(-50vw + 50%)',
+      marginRight: 'calc(-50vw + 50%)',
+      backgroundColor: '#CCB79f',
+      textAlign: 'center',
+      padding: '20px 0',
+      marginTop: isMobile ? '-96px' : '-32px', // Increased negative margin
+      marginBottom: '0'
+    }}>
+      <img 
+        src="/logo.png" 
+        alt="Company Logo" 
+        style={{ 
+          maxWidth: '350px', 
+          width: '100%', 
+          height: 'auto' 
+        }} 
+      />
+    </div>
 
     <div className="home-container">
 
