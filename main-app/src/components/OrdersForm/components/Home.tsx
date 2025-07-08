@@ -144,7 +144,7 @@ const Home = ({ pages = [], onSelectForm }: HomeProps) => {
       backgroundColor: '#CCB79f',
       textAlign: 'center',
       padding: '20px 0',
-      marginTop: isMobile ? '-96px' : '-32px', // Increased negative margin
+      marginTop: isMobile ? '0px' : '-10px',
       marginBottom: '0'
     }}>
       <img 
