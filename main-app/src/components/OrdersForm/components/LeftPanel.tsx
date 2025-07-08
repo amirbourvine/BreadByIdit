@@ -284,11 +284,9 @@ function LeftPanel({
   style={{
     ...topButtonStyle,
     marginTop: 'auto',
-    marginBottom: '0',
+    marginBottom: panelOpen ? '0' : '-5px', // Override the 12px from topButtonStyle
     justifyContent: 'center',
     backgroundColor: '#6366f1',
-    position: 'relative', // Add this
-    bottom: panelOpen ? '0' : '5px' // Use bottom instead of transform
   }}
   onMouseOver={(e) => {
     e.currentTarget.style.backgroundColor = '#4f46e5';
