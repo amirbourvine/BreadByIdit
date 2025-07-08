@@ -294,12 +294,12 @@ function LeftPanel({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    transition: 'all 0.2s ease',
+    transition: 'top 0.2s ease, background-color 0.2s ease, transform 0.2s ease',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     marginTop: 'auto',
     marginBottom: '0',
     position: 'relative',
-    top: panelOpen ? '0' : '-5px'
+    top: panelOpen ? '0px' : '-5px'
   }}
   onMouseOver={(e) => {
     e.currentTarget.style.backgroundColor = '#4f46e5';
@@ -312,6 +312,7 @@ function LeftPanel({
 >
   {panelOpen ? '◀ Collapse' : '▶ Expand'}
 </button>
+
 
       )}
     </div>
