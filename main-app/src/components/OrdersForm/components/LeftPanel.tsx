@@ -294,23 +294,24 @@ function LeftPanel({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    transition: 'margin-bottom 0.2s ease, background-color 0.2s ease, transform 0.2s ease',
+    transition: 'transform 0.2s ease, background-color 0.2s ease',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     marginTop: 'auto',
-    marginBottom: panelOpen ? '0px' : '10px',
-    position: 'relative'
+    transform: panelOpen ? 'translateY(0)' : 'translateY(-5px)',
+    position: 'relative',
   }}
   onMouseOver={(e) => {
     e.currentTarget.style.backgroundColor = '#4f46e5';
-    e.currentTarget.style.transform = 'translateY(-1px)';
+    e.currentTarget.style.transform = `${panelOpen ? 'translateY(-1px)' : 'translateY(-6px)'}`;
   }}
   onMouseOut={(e) => {
     e.currentTarget.style.backgroundColor = '#6366f1';
-    e.currentTarget.style.transform = 'translateY(0)';
+    e.currentTarget.style.transform = panelOpen ? 'translateY(0)' : 'translateY(-5px)';
   }}
 >
   {panelOpen ? '◀ Collapse' : '▶ Expand'}
 </button>
+
 
 
 
