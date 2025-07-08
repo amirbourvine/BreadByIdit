@@ -282,20 +282,32 @@ function LeftPanel({
         <button
   onClick={togglePanel}
   style={{
-    ...topButtonStyle,
-    marginTop: 'auto',
-    marginBottom: '0',
-    justifyContent: 'center',
+    padding: '14px 16px',
     backgroundColor: '#6366f1',
-    transform: panelOpen ? 'translateY(0)' : 'translateY(-5px) !important'
+    borderRadius: '8px',
+    border: 'none',
+    color: 'white',
+    cursor: 'pointer',
+    fontSize: isMobile ? '1.1rem' : '1rem',
+    fontWeight: '500',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    marginTop: 'auto',
+    marginBottom: panelOpen ? '0' : '-5px',
+    position: 'relative',
+    top: panelOpen ? '0' : '-5px'
   }}
   onMouseOver={(e) => {
     e.currentTarget.style.backgroundColor = '#4f46e5';
-    e.currentTarget.style.transform = panelOpen ? 'translateY(-1px)' : 'translateY(-6px)';
+    e.currentTarget.style.transform = 'translateY(-1px)';
   }}
   onMouseOut={(e) => {
     e.currentTarget.style.backgroundColor = '#6366f1';
-    e.currentTarget.style.transform = panelOpen ? 'translateY(0)' : 'translateY(-5px)';
+    e.currentTarget.style.transform = 'translateY(0)';
   }}
 >
   {panelOpen ? '◀ Collapse' : '▶ Expand'}
