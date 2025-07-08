@@ -289,7 +289,7 @@ function LeftPanel({
   <button
     onClick={togglePanel}
     style={{
-      padding: '14px 16px',
+      padding: panelOpen ? '14px 16px' : '14px 16px 18px 16px',
       backgroundColor: '#6366f1',
       borderRadius: '8px',
       border: 'none',
