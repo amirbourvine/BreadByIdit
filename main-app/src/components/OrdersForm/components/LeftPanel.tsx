@@ -284,7 +284,8 @@ function LeftPanel({
   style={{
     ...topButtonStyle,
     marginTop: 'auto',
-    marginBottom: panelOpen ? '0' : '-5px', // Override the 12px from topButtonStyle
+    marginBottom: panelOpen ? '0' : '-5px',
+    marginTop: panelOpen ? 'auto' : 'calc(auto - 5px)', // Move the entire button up
     justifyContent: 'center',
     backgroundColor: '#6366f1',
   }}
