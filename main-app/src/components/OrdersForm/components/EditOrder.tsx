@@ -19,7 +19,11 @@ interface Order {
   timestamp: string;
 }
 
-function EditOrder() {
+interface EditOrderProps {
+  panelOpen?: boolean;
+}
+
+function EditOrder({panelOpen} : EditOrderProps) {
   const [step, setStep] = useState<number>(1);
   const [forms, setForms] = useState<string[]>([]);
   const [selectedForm, setSelectedForm] = useState<string>('');
@@ -29,6 +33,17 @@ function EditOrder() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   // Fetch available forms
   useEffect(() => {
@@ -374,6 +389,32 @@ function EditOrder() {
   }, [selectedOrder]);
 
   return (
+
+    <>
+    {(!panelOpen && !isMobile) && <div style={{ height: '22px' }} />}
+
+
+    <div style={{ 
+      width: '100vw',
+      marginLeft: 'calc(-50vw + 50%)',
+      marginRight: 'calc(-50vw + 50%)',
+      backgroundColor: '#CCB79f',
+      textAlign: 'center',
+      padding: '20px 0',
+      marginTop: isMobile ? '0px' : '-16px',
+      marginBottom: '0'
+    }}>
+      <img 
+        src="/logo.png" 
+        alt="Company Logo" 
+        style={{ 
+          maxWidth: '350px', 
+          width: '100%', 
+          height: 'auto' 
+        }} 
+      />
+    </div>
+
     <div>
       {step === 1 && renderSearchForm()}
       {step === 2 && renderOrderList()}
@@ -404,6 +445,7 @@ function EditOrder() {
         </div>
       )}
     </div>
+    </>
   );
 }
 

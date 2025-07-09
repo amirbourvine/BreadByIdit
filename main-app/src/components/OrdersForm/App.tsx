@@ -288,7 +288,9 @@ function App() {
               <p>{error}</p>
             </div>
           ) : showEditOrder ? (
-            <EditOrder />
+            <EditOrder 
+              panelOpen={panelOpen}
+            />
           ) : selectedForm === "Home" ? (
             <Home 
               pages={pages} 
