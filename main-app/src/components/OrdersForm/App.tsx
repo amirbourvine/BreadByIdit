@@ -301,6 +301,7 @@ function App() {
               products={products} 
               above_comment={comment}
               onPlaceAnotherOrder={onPlaceAnotherOrder}
+              panelOpen={panelOpen}
             />
           )}
         </div>

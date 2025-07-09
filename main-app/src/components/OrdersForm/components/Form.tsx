@@ -50,6 +50,7 @@ interface FormProps {
   loading?: boolean;
   onPlaceAnotherOrder?: () => void;
   above_comment?: string;
+  panelOpen?: boolean;
 }
 
 function Form({ 
@@ -60,7 +61,8 @@ function Form({
   onDelete,
   loading: externalLoading = false,
   onPlaceAnotherOrder,
-  above_comment
+  above_comment,
+  panelOpen
 }: FormProps) {
   // Initialize state from initialOrder if provided
   const [comment, setComment] = useState(initialOrder?.comment || '');
@@ -79,6 +81,17 @@ function Form({
   const [moveLoading, setMoveLoading] = useState(false);
   const [moveError, setMoveError] = useState<string | null>(null);
   
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Track selected products and their extras
   const [selectedProducts, setSelectedProducts] = useState<{[key: string]: {
     selected: boolean;
@@ -401,19 +414,33 @@ function Form({
   }
   
   return (
+
+    <>
+    {(!panelOpen && !isMobile) && <div style={{ height: '22px' }} />}
+
+
+    <div style={{ 
+      width: '100vw',
+      marginLeft: 'calc(-50vw + 50%)',
+      marginRight: 'calc(-50vw + 50%)',
+      backgroundColor: '#CCB79f',
+      textAlign: 'center',
+      padding: '20px 0',
+      marginTop: isMobile ? '0px' : '-16px',
+      marginBottom: '0'
+    }}>
+      <img 
+        src="/logo.png" 
+        alt="Company Logo" 
+        style={{ 
+          maxWidth: '350px', 
+          width: '100%', 
+          height: 'auto' 
+        }} 
+      />
+    </div>
+
     <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-      {/* Logo added at the top of the form with larger size */}
-      <div style={{ textAlign: 'center', margin: '20px 0' }}>
-        <img 
-          src="/logo.png" 
-          alt="Company Logo" 
-          style={{ 
-            maxWidth: '350px', 
-            width: '100%',
-            height: 'auto' 
-          }} 
-        />
-      </div>
       
       <h1 style={{ textAlign: 'center', margin: '20px 0' }}>
         {initialOrder ? 'Edit Order' : 'Order Form'} for {date}
@@ -760,6 +787,7 @@ function Form({
         </>
       )}
     </div>
+    </>
   );
 }
 
