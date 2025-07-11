@@ -287,7 +287,7 @@ function EditOrder({panelOpen} : EditOrderProps) {
           display: 'flex', 
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px 20px',
+          padding: panelOpen ? '10px 100px' : '10px 20px',
           backgroundColor: '#f0f0f0',
           marginBottom: '20px',
           width: '100vw',
