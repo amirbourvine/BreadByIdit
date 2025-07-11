@@ -289,7 +289,8 @@ function EditOrder({panelOpen} : EditOrderProps) {
           alignItems: 'center',
           padding: '10px 20px',
           backgroundColor: '#f0f0f0',
-          marginBottom: '20px'
+          marginBottom: '20px',
+          width: '100%'
         }}>
           <h2>Editing Order for {selectedOrder.name}</h2>
           <button
