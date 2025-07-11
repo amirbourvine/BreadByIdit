@@ -416,6 +416,11 @@ function Form({
   return (
 
     <>
+
+    { initialOrder && 
+    <>
+
+    
     {(!panelOpen && !isMobile) && <div style={{ height: '22px' }} />}
 
 
@@ -439,6 +444,8 @@ function Form({
         }} 
       />
     </div>
+    </>
+    }
 
     <div style={{ maxWidth: '800px', margin: '0 auto' }}>
       

@@ -393,7 +393,6 @@ function EditOrder({panelOpen} : EditOrderProps) {
     <>
     {(!panelOpen && !isMobile) && <div style={{ height: '22px' }} />}
 
-
     <div style={{ 
       width: '100vw',
       marginLeft: 'calc(-50vw + 50%)',
