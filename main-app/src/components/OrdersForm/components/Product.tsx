@@ -112,7 +112,7 @@ function Product({
       </div>
       
       <div style={{ display: 'flex', alignItems: 'center' }}>
-         {isMobile && <div style={{ height: '2px' }}></div>}
+         {isMobile && <div style={{ height: '8px' }}></div>}
         <div style={{ marginRight: '16px', position: 'relative' }}>
           <img 
             src={getImageSrc()}
