@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Extra {
   name: string;
@@ -31,6 +31,17 @@ function Product({
   inventoryError
 }: ProductProps) {
   
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+      
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    
   const getImageSrc = () => {
     return `http://13.49.120.33/api/images/${encodeURIComponent(name)}`;
   };
@@ -101,6 +112,7 @@ function Product({
       </div>
       
       <div style={{ display: 'flex', alignItems: 'center' }}>
+         {isMobile && <div style={{ height: '2px' }}></div>}
         <div style={{ marginRight: '16px', position: 'relative' }}>
           <img 
             src={getImageSrc()}
